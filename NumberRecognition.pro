@@ -7,8 +7,11 @@ QMAKE_CXXFLAGS += -std=c++11
 LIBS += -lopencv_core -lopencv_highgui
 
 SOURCES += main.cpp \
-    mnistloader/mnistloader.cpp
+    mnistloader/mnistloader.cpp \
+    featureextraction/featuresetextractor.cpp
 
 HEADERS += \
-    mnistloader/mnistloader.h
+    mnistloader/mnistloader.h \
+    featureextraction/featureextractor.h \
+    featureextraction/featuresetextractor.h
 
