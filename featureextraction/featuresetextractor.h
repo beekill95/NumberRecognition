@@ -13,7 +13,8 @@ private:
 
 public:
     FeatureSetExtractor();
-    FeatureSetExtractor(const std::vector<FeatureExtractor*>& featureExtractors);
+    //FeatureSetExtractor(const std::vector<FeatureExtractor*>& featureExtractors);
+    FeatureSetExtractor(std::vector<FeatureExtractor *>&& featureExtractors);
     ~FeatureSetExtractor();
 
     void addFeature(FeatureExtractor* featureExtractor);

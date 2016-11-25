@@ -3,7 +3,7 @@
 FeatureSetExtractor::FeatureSetExtractor()
 { }
 
-FeatureSetExtractor::FeatureSetExtractor(const std::vector<FeatureExtractor *> &featureExtractors)
+FeatureSetExtractor::FeatureSetExtractor(std::vector<FeatureExtractor *>&& featureExtractors)
     : featureExtractors(featureExtractors)
 { }
 
