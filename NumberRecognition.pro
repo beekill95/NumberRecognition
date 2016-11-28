@@ -10,7 +10,10 @@ SOURCES += main.cpp \
     mnistloader/mnistloader.cpp \
     featureextraction/featuresetextractor.cpp \
     recognizer/knearestneighbors.cpp \
-    featureextraction/pixelfeature/pixelextractor.cpp
+    featureextraction/pixelfeature/pixelextractor.cpp \
+    featureextraction/statisticalfeatures/histogram/meanhistogram.cpp \
+    featureextraction/statisticalfeatures/histogram/histogrambaseddescriptor.cpp \
+    featureextraction/statisticalfeatures/histogram/moment.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -18,5 +21,8 @@ HEADERS += \
     featureextraction/featuresetextractor.h \
     recognizer/recognizer.h \
     recognizer/knearestneighbors.h \
-    featureextraction/pixelfeature/pixelextractor.h
+    featureextraction/pixelfeature/pixelextractor.h \
+    featureextraction/statisticalfeatures/histogram/meanhistogram.h \
+    featureextraction/statisticalfeatures/histogram/histogrambaseddescriptor.h \
+    featureextraction/statisticalfeatures/histogram/moment.h
 
