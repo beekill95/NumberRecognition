@@ -3,7 +3,8 @@
 #include "recognizer/recognizer.h"
 #include "recognizer/knearestneighbors.h"
 
-#include "featureextraction/pixelfeature/pixelextractor.h"
+#include "featureextraction/pixelfeature/pixelfeature.h"
+#include "featureextraction/statisticalfeatures/statisticalfeature.h"
 
 #include "validator/validator.h"
 

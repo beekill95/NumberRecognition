@@ -51,7 +51,11 @@ HEADERS += \
     featureextraction/statisticalfeatures/cooccurencematrix/entropy.h \
     featureextraction/statisticalfeatures/cooccurencematrix/uniformitycooccurence.h \
     tests/common.h \
-    validator/validator.h
+    validator/validator.h \
+    featureextraction/pixelfeature/pixelfeature.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/cooccurencematrixfeature.h \
+    featureextraction/statisticalfeatures/histogram/histogramfeature.h \
+    featureextraction/statisticalfeatures/statisticalfeature.h
 
 debug {
     DEFINES +=
