@@ -16,9 +16,10 @@ std::vector<double> Entropy::extractFeature(const cv::Mat &image) const
         const float* row = probabilityMatrix.ptr<float>(r);
 
         for (int c = 0; c < probabilityMatrix.cols; ++c) {
-            entropy += row[c] * log2(row[c]);
+            if (row[c] != 0.0f)
+                entropy += row[c] * log2(row[c]);
         }
     }
 
-    return {entropy};
+    return {-entropy};
 }

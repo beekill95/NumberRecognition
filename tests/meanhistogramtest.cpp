@@ -12,7 +12,7 @@ TEST(TestMeanHistogram, TestWithSmoothImage) {
     std::vector<double> mean = meanHistogram.extractFeature(image);
 
     ASSERT_EQ(mean.size(), 1);
-    EXPECT_EQ(82.64, mean[0]);
+    EXPECT_NEAR(80.1331, mean[0], 0.00005);
 }
 
 TEST(TestMeanHistogram, TestWithCoarseImage) {
@@ -22,7 +22,7 @@ TEST(TestMeanHistogram, TestWithCoarseImage) {
     std::vector<double> mean = meanHistogram.extractFeature(image);
 
     ASSERT_EQ(mean.size(), 1);
-    EXPECT_EQ(143.56, mean[0]);
+    EXPECT_NEAR(86.7380, mean[0], 0.0005);
 }
 
 TEST(TestMeanHistogram, TestWithRegularImage) {
@@ -32,5 +32,5 @@ TEST(TestMeanHistogram, TestWithRegularImage) {
     std::vector<double> mean = meanHistogram.extractFeature(image);
 
     ASSERT_EQ(mean.size(), 1);
-    EXPECT_EQ(99.72, mean[0]);
+    EXPECT_NEAR(113.9048, mean[0], 0.00005);
 }

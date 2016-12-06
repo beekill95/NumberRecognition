@@ -17,26 +17,65 @@ double sum(const float* array, int size = 256)
 
 double calculateMeanRow(const cv::Mat& probabilityMatrix)
 {
-    // TODO
-    return 0.0;
+    double meanRow = 0.0;
+    for (int r = 0; r < probabilityMatrix.rows; ++r) {
+        double totalColumn = 0.0;
+
+        const float* row = probabilityMatrix.ptr<float>(r);
+        for (int c = 0; c < probabilityMatrix.cols; ++c)
+            totalColumn += row[c];
+
+        meanRow += totalColumn * r;
+    }
+    return meanRow;
 }
 
 double calculateMeanColumn(const cv::Mat& probabilityMatrix)
 {
-    // TODO
-    return 0.0;
+    double meanColumn = 0.0;
+    for (int c = 0; c < probabilityMatrix.cols; ++c) {
+        double totalRow = 0.0;
+
+        for (int r = 0; r < probabilityMatrix.rows; ++r)
+            totalRow += probabilityMatrix.at<float>(r, c);
+
+        meanColumn += c * totalRow;
+    }
+
+    return meanColumn;
 }
 
 double calculateVarianceRow(const cv::Mat& probabilityMatrix, double meanRow)
 {
-    // TODO
-    return 0.0;
+    double varianceRow = 0.0;
+
+    for (int r = 0; r < probabilityMatrix.rows; ++r) {
+        double totalColumn = 0.0;
+
+        const float* row = probabilityMatrix.ptr<float>(r);
+        for (int c = 0; c < probabilityMatrix.cols; ++c)
+            totalColumn += row[c];
+
+        varianceRow += totalColumn * (meanRow - r) * (meanRow - r);
+    }
+
+    return varianceRow;
 }
 
 double calculateVarianceColumn(const cv::Mat& probabilityMatrix, double meanColumn)
 {
-    // TODO
-    return 0.0;
+    double varianceCol = 0.0;
+
+    for (int c = 0; c < probabilityMatrix.cols; ++c) {
+        double totalRow = 0.0;
+
+        for (int r = 0; r < probabilityMatrix.rows; ++r)
+            totalRow += probabilityMatrix.at<float>(r, c);
+
+        varianceCol += totalRow * (meanColumn - c) * (meanColumn - c);
+    }
+
+    return varianceCol;
 }
 
 std::vector<double> Correlation::extractFeature(const cv::Mat &image) const

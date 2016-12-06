@@ -5,7 +5,7 @@
 
 #define COARSE_IMAGE_PATH "data/images/coarse.tif"
 #define SMOOTH_IMAGE_PATH "data/images/smooth.tif"
-#define REGULAR_IMAGE_PATH "data/images/smooth.tif"
+#define REGULAR_IMAGE_PATH "data/images/regular.tif"
 
 #define RANDOM_IMAGE_PATH "data/images/random.tif"
 #define PERIODIC_IMAGE_PATH "data/images/periodic.tif"

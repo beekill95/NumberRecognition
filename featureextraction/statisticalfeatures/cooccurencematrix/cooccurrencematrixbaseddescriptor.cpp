@@ -56,11 +56,12 @@ cv::Mat CooccurrenceMatrixBasedDescriptor::calculateProbabilityOccurenceMatrix(c
     cv::Mat cooccurrenceMatrix = calculateOccurenceMatrix(image);
 
     cv::Mat result;
+
+
+//    std::cout << '\n' << '\n' << cooccurrenceMatrix << std::endl;
 //    cv::normalize(cooccurrenceMatrix, result, 0, 255, CV_MINMAX, CV_8UC1);
-//    cv::log(result + 1, result);
-//    cv::convertScaleAbs(result, result);
-//    cv::normalize(result, result, 0, 255, CV_MINMAX, CV_8UC1);
 //    cv::imshow("Image", result);
+//    std::cout << result << std::endl;
 //    cv::waitKey(0);
 
     // so luong cap pixel thoa man _operator

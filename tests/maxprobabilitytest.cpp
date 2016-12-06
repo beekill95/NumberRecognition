@@ -32,5 +32,5 @@ TEST(TestMaxProbability, TestWithMixedTextureImage) {
     std::vector<double> maxProb = maximumProbability.extractFeature(image);
 
     ASSERT_EQ(1, maxProb.size());
-    EXPECT_NEAR(0.0686, maxProb[0], 0.00005);
+    EXPECT_NEAR(0.0589, maxProb[0], 0.00005);
 }

@@ -28,7 +28,11 @@ SOURCES += main.cpp \
     tests/maxprobabilitytest.cpp \
     tests/contrasttest.cpp \
     tests/pixelextractortest.cpp \
-    validator/validator.cpp
+    validator/validator.cpp \
+    tests/correlationtest.cpp \
+    tests/testuniformitycooccurrence.cpp \
+    tests/homogeneitytest.cpp \
+    tests/cooccurrenceentropytest.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \

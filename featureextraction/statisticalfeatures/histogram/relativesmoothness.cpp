@@ -16,6 +16,9 @@ std::vector<double> RelativeSmoothness::extractFeature(const cv::Mat &image) con
         variance += diff * diff * histogramDistribution[i];
     }
 
+    // normalize variance
+    variance = variance / (255 * 255);
+
     return {1.0 - 1.0/(1 + variance)};
 }
 

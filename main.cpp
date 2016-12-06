@@ -5,6 +5,7 @@
 
 #include "featureextraction/pixelfeature/pixelfeature.h"
 #include "featureextraction/statisticalfeatures/statisticalfeature.h"
+#include "featureextraction/featuresetextractor.h"
 
 #include "validator/validator.h"
 
@@ -27,6 +28,10 @@
 using namespace std;
 using namespace cv;
 
+cv::Point relativeTo(const cv::Point& first) {
+    return cv::Point(first.x, first.y + 1);
+}
+
 int main(int argc, char** argv)
 {
 #ifdef GTEST
@@ -48,14 +53,31 @@ int main(int argc, char** argv)
     }
 
     // pixel extractor
-    PixelExtractor pixelExtractor;
+    // PixelExtractor pixelExtractor;
+
+    // feature set extractor
+    FeatureSetExtractor featureSetExtractor;
+
+    // add all statistical features
+    featureSetExtractor.addFeature(new AverageEntropy());
+    featureSetExtractor.addFeature(new MeanHistogram());
+    featureSetExtractor.addFeature(new Moment(5));
+    featureSetExtractor.addFeature(new RelativeSmoothness());
+    featureSetExtractor.addFeature(new UniformityHistogram());
+
+    featureSetExtractor.addFeature(new Contrast(relativeTo));
+    featureSetExtractor.addFeature(new Correlation(relativeTo));
+    featureSetExtractor.addFeature(new Entropy(relativeTo));
+    featureSetExtractor.addFeature(new Homogeneity(relativeTo));
+    featureSetExtractor.addFeature(new MaximumProbability(relativeTo));
+    featureSetExtractor.addFeature(new UniformityCooccurence(relativeTo));
 
     // trich xuat ra dac trung
     std::vector<std::vector<double> > inputs, outputs;
     inputs.reserve(IMAGE_COUNT);
     outputs.reserve(IMAGE_COUNT);
     for (int i = 0; i < IMAGE_COUNT; ++i) {
-        inputs.push_back(pixelExtractor.extractFeature(dataImages[i]));
+        inputs.push_back(featureSetExtractor.extractFeatures(dataImages[i]));
         outputs.push_back({dataLabels[i]});
     }
 

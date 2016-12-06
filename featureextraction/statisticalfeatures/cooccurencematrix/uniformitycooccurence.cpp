@@ -13,10 +13,11 @@ std::vector<double> UniformityCooccurence::extractFeature(const cv::Mat &image) 
 
     double uniformity = 0.0;
     for (int r = 0; r < probabilityMatrix.rows; ++r) {
-        const float* row = probabilityMatrix.ptr<float>(r);
 
-        for (int c = 0; c < probabilityMatrix.cols; ++c)
-            uniformity += row[c] * row[c];
+        for (int c = 0; c < probabilityMatrix.cols; ++c) {
+            float prob = probabilityMatrix.at<float>(r, c);
+            uniformity += prob * prob;
+        }
     }
 
     return {uniformity};
