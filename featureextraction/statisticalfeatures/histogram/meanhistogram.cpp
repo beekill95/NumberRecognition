@@ -11,6 +11,6 @@ std::vector<double> MeanHistogram::extractFeature(const cv::Mat &image) const
     for (int i = 0; i < 256; ++i)
         mean[0] += i * histogram[i];
 
-    return mean;
+    return {mean};
 }
 

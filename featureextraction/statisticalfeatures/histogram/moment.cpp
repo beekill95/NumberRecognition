@@ -3,10 +3,13 @@
 #include <cmath>
 
 Moment::Moment(int count)
-    : nthMoments(count)
 {
-    for (int i = 0; i < count; ++i)
-        nthMoments[i] = i;
+    if (count < 2)
+        count = 2;
+    nthMoments = std::vector<int>(count - 1);
+
+    for (int i = 2; i <= count; ++i)
+        nthMoments[i - 2] = i;
 }
 
 Moment::Moment(const std::vector<int> &moments)
@@ -26,16 +29,6 @@ double extractMomentNth(double mean, float histogramDistribution[], int momentNt
     }
 
     return nthMoment;
-}
-
-double histogramMean(float histogramDistribution[])
-{
-    double mean = 0.0;
-    for (int i = 0; i < 256; ++i) {
-        mean += i * histogramDistribution[i];
-    }
-
-    return mean;
 }
 
 std::vector<double> Moment::extractFeature(const cv::Mat &image) const

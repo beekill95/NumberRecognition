@@ -11,7 +11,7 @@ private:
 public:
     /*
     * count: so luong moment ma muon xuat ra
-    * vi du: count = 5 thi se xuat ra moment tu 0 -> 5
+    * vi du: count = 5 thi se xuat ra moment tu 2 -> 5
     */
     Moment(int count);
 

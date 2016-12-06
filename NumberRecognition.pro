@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 QMAKE_CXXFLAGS += -std=c++11
-LIBS += -lopencv_core -lopencv_highgui
+LIBS += -lopencv_core -lopencv_highgui -lgtest -lpthread
 
 SOURCES += main.cpp \
     mnistloader/mnistloader.cpp \
@@ -13,7 +13,22 @@ SOURCES += main.cpp \
     featureextraction/pixelfeature/pixelextractor.cpp \
     featureextraction/statisticalfeatures/histogram/meanhistogram.cpp \
     featureextraction/statisticalfeatures/histogram/histogrambaseddescriptor.cpp \
-    featureextraction/statisticalfeatures/histogram/moment.cpp
+    featureextraction/statisticalfeatures/histogram/moment.cpp \
+    featureextraction/statisticalfeatures/histogram/relativesmoothness.cpp \
+    featureextraction/statisticalfeatures/histogram/uniformity.cpp \
+    featureextraction/statisticalfeatures/histogram/averageentropy.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/cooccurrencematrixbaseddescriptor.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/maximumprobability.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/correlation.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/contrast.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/homogeneity.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/entropy.cpp \
+    tests/meanhistogramtest.cpp \
+    featureextraction/statisticalfeatures/cooccurencematrix/uniformitycooccurence.cpp \
+    tests/maxprobabilitytest.cpp \
+    tests/contrasttest.cpp \
+    tests/pixelextractortest.cpp \
+    validator/validator.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -24,5 +39,20 @@ HEADERS += \
     featureextraction/pixelfeature/pixelextractor.h \
     featureextraction/statisticalfeatures/histogram/meanhistogram.h \
     featureextraction/statisticalfeatures/histogram/histogrambaseddescriptor.h \
-    featureextraction/statisticalfeatures/histogram/moment.h
+    featureextraction/statisticalfeatures/histogram/moment.h \
+    featureextraction/statisticalfeatures/histogram/relativesmoothness.h \
+    featureextraction/statisticalfeatures/histogram/uniformity.h \
+    featureextraction/statisticalfeatures/histogram/averageentropy.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/cooccurrencematrixbaseddescriptor.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/maximumprobability.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/correlation.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/contrast.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/homogeneity.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/entropy.h \
+    featureextraction/statisticalfeatures/cooccurencematrix/uniformitycooccurence.h \
+    tests/common.h \
+    validator/validator.h
 
+debug {
+    DEFINES +=
+}

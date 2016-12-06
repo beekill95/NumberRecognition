@@ -28,3 +28,12 @@ void HistogramBasedDescriptor::calculateHistogram(const cv::Mat &image, float hi
     for (int i = 0; i < 256; ++i)
         histogram[i] /= totalPixel;
 }
+
+double HistogramBasedDescriptor::histogramMean(float histogramDistribution[])
+{
+    double mean = 0.0;
+    for (int i = 0; i < 256; ++i)
+        mean += i * histogramDistribution[i];
+
+    return mean;
+}

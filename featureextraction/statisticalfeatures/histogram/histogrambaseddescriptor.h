@@ -12,6 +12,7 @@ public:
 protected:
     static void calculateHistogram(const cv::Mat& image, int histogram[]);
     static void calculateHistogram(const cv::Mat &image, float histogram[]);
+    static double histogramMean(float histogramDistribution[]);
 };
 
 #endif // HISTOGRAMBASEDDESCRIPTOR_H
