@@ -57,11 +57,12 @@ int main(int argc, char** argv)
 
     // feature set extractor
     FeatureSetExtractor featureSetExtractor;
+//    featureSetExtractor.addFeature(new PixelExtractor());
 
     // add all statistical features
     featureSetExtractor.addFeature(new AverageEntropy());
     featureSetExtractor.addFeature(new MeanHistogram());
-    featureSetExtractor.addFeature(new Moment(5));
+//    featureSetExtractor.addFeature(new Moment(5));
     featureSetExtractor.addFeature(new RelativeSmoothness());
     featureSetExtractor.addFeature(new UniformityHistogram());
 

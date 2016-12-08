@@ -34,3 +34,13 @@ TEST(TestMeanHistogram, TestWithRegularImage) {
     ASSERT_EQ(mean.size(), 1);
     EXPECT_NEAR(113.9048, mean[0], 0.00005);
 }
+
+TEST(TestMeanHistogram, TestWithSoNam) {
+    cv::Mat image = cv::imread(SO_NAM_PATH, CV_LOAD_IMAGE_GRAYSCALE);
+    MeanHistogram meanHistogram;
+
+    std::vector<double> mean = meanHistogram.extractFeature(image);
+
+    ASSERT_EQ(mean.size(), 1);
+    EXPECT_NEAR(36.1084, mean[0], 0.00005);
+}

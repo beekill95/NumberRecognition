@@ -32,7 +32,11 @@ SOURCES += main.cpp \
     tests/correlationtest.cpp \
     tests/testuniformitycooccurrence.cpp \
     tests/homogeneitytest.cpp \
-    tests/cooccurrenceentropytest.cpp
+    tests/cooccurrenceentropytest.cpp \
+    tests/smoothnesstest.cpp \
+    tests/momenttest.cpp \
+    tests/uniformityhistogramtest.cpp \
+    tests/entropyhistogramtest.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -62,5 +66,5 @@ HEADERS += \
     featureextraction/statisticalfeatures/statisticalfeature.h
 
 debug {
-    DEFINES +=
+    DEFINES += GTEST
 }

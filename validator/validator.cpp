@@ -61,7 +61,7 @@ void Validator::validate(Recognizer *recognizer,
     }
 
     // display the result
-    std::cout << "Phan loai dung: " << rightCount << " truong hop trong tong so " << testingLabels.size() << " truong hop"
+    std::cout << "\nPhan loai dung: " << rightCount << " truong hop trong tong so " << testingLabels.size() << " truong hop"
               << "\nPhan loai dung: " << rightCount * 100.0f / testingLabels.size() << " %" << std::endl;
 }
 

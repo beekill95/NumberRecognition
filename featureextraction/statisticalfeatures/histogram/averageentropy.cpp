@@ -9,7 +9,8 @@ std::vector<double> AverageEntropy::extractFeature(const cv::Mat &image) const
 
     double entropy = 0.0;
     for (int i = 0; i < 256; ++i)
-        entropy += histogramDistribution[i] * log2(histogramDistribution[i]);
+        if (histogramDistribution[i] != 0.0f)
+            entropy += histogramDistribution[i] * log2(histogramDistribution[i]);
 
     return {-entropy};
 }

@@ -7,6 +7,8 @@
 #define SMOOTH_IMAGE_PATH "data/images/smooth.tif"
 #define REGULAR_IMAGE_PATH "data/images/regular.tif"
 
+#define SO_NAM_PATH "data/images/so_nam.jpeg"
+
 #define RANDOM_IMAGE_PATH "data/images/random.tif"
 #define PERIODIC_IMAGE_PATH "data/images/periodic.tif"
 #define MIX_TEXTURE_IMAGE_PATH "data/images/mix_texture.tif"
