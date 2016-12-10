@@ -46,3 +46,21 @@ snn_type& snnMatrix::at(int r, int c)
 
     return _data[r * _cols + c];
 }
+
+void snnMatrix::setRow(int rowIndex, int size, const snn_type *row)
+{
+    if (size != _cols || rowIndex < 0 || rowIndex >= _rows)
+        return;
+
+    snn_type* rowStart = _data + index * _cols;
+    memcpy(rowStart, row, _cols * sizeof(snn_type));
+}
+
+void snnMatrix::setRow(int rowIndex, const std::vector<snn_type> &row)
+{
+    if (_cols != (int) row.size() || rowIndex < 0 || rowIndex >= _rows)
+        return;
+
+    snn_type* rowStart = _data + index * _cols;
+    memcpy(rowStart, row[0], _cols * sizeof(snn_type));
+}

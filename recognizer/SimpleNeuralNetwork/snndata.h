@@ -1,6 +1,8 @@
 #ifndef SNNDATA
 #define SNNDATA
 
+#include <vector>
+
 typedef double snn_type;
 
 enum snn_activation_function
@@ -33,6 +35,10 @@ public:
 
     int getRows() const {return _rows;}
     int getCols() const {return _cols;}
+
+    // the size of row must agree with internal matrix' col count
+    void setRow(int rowIndex, int size, const snn_type* row);
+    void setRow(int rowIndex, const std::vector<snn_type>& row);
 
     const snn_type* row(int index) const;
     snn_type* row(int index);
