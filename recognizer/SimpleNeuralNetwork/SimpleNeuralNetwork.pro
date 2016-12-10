@@ -19,3 +19,6 @@ HEADERS += \
 debug {
     DEFINES += VERBOSE
 }
+
+DISTFILES += \
+    SimpleNeuralNetwork.pri

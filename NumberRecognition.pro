@@ -3,7 +3,9 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-include(recognizer/SimpleNeuralNetwork/SimpleNeuralNetwork.pro)
+DEPENDPATH += . recognizer/SimpleNeuralNetwork
+INCLUDEPATH += . recognizer/SimpleNeuralNetwork
+include(recognizer/SimpleNeuralNetwork/SimpleNeuralNetwork.pri)
 
 QMAKE_CXXFLAGS += -std=c++11
 LIBS += -lopencv_core -lopencv_highgui -lgtest -lpthread
@@ -38,7 +40,8 @@ SOURCES += main.cpp \
     tests/smoothnesstest.cpp \
     tests/momenttest.cpp \
     tests/uniformityhistogramtest.cpp \
-    tests/entropyhistogramtest.cpp
+    tests/entropyhistogramtest.cpp \
+    recognizer/neuralnetwork.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -65,7 +68,8 @@ HEADERS += \
     featureextraction/pixelfeature/pixelfeature.h \
     featureextraction/statisticalfeatures/cooccurencematrix/cooccurencematrixfeature.h \
     featureextraction/statisticalfeatures/histogram/histogramfeature.h \
-    featureextraction/statisticalfeatures/statisticalfeature.h
+    featureextraction/statisticalfeatures/statisticalfeature.h \
+    recognizer/neuralnetwork.h
 
 debug {
     DEFINES += GTEST
