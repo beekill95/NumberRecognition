@@ -69,8 +69,9 @@ HEADERS += \
     featureextraction/statisticalfeatures/cooccurencematrix/cooccurencematrixfeature.h \
     featureextraction/statisticalfeatures/histogram/histogramfeature.h \
     featureextraction/statisticalfeatures/statisticalfeature.h \
-    recognizer/neuralnetwork.h
+    recognizer/neuralnetwork.h \
+    definition.h
 
 debug {
-    DEFINES += GTEST
+    DEFINES += VERBOSE
 }

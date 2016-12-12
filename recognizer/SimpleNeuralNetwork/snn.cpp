@@ -56,7 +56,7 @@ void snn::_generateRandomWeights()
 {
     srand(time(0));
     for (int i = 0; i < _numLayers; ++i)
-        _layers[i]->generateRandomWeights(0, 1);
+        _layers[i]->generateRandomWeights(-10, 10);
 }
 
 void snn::predict(const snn_type *inputs, snn_type *outputs) const
@@ -86,7 +86,8 @@ void snn::train(const snnMatrix *inputs, const snnMatrix *outputs)
 
         for (int r = 0; r < inputs->getRows(); ++r) {
             const snn_type* input = inputs->row(r);
-            memset(networkOutputs, 0, sizeof(snn_type) * outputs->getCols());
+//            memset(networkOutputs, 0, sizeof(snn_type) * outputs->getCols());
+            std::fill(networkOutputs, networkOutputs + outputs->getCols(), (snn_type) 0.0);
 
             // feed forward phase
             _feedForward(input, networkOutputs);
@@ -119,10 +120,10 @@ void snn::train(const snnMatrix *inputs, const snnMatrix *outputs)
         // check for error below the desired error
         // sumError may suffer from overflow
 #ifdef VERBOSE
-        std::cout << "Epochs: " << epoch << "\tCurrent error: " << sumError / (outputs->getRows() * outputs->getCols()) << '\n';
+        std::cout << "Epochs: " << epoch << "\tCurrent error: " << sumError / outputs->getRows() << '\n';
 #endif
 
-        if (sumError / (outputs->getRows() * outputs->getCols()) < _desiredMeanError)
+        if (sumError / outputs->getRows() < _desiredMeanError)
             break;
     }
 
@@ -215,6 +216,11 @@ snn_type snn::_calculateOutputErrors(const snn_type *expectedOutputs, const snn_
 
             sum += mean_square_error_func(expectedOutput, networkOutput);
             errors[i] = mean_square_error_deri_func(expectedOutput, networkOutput);
+
+//            if (std::isnan(errors[i]) || std::isinf(errors[i])) {
+//                int x = 0;
+//                x += 1;
+//            }
         }
     } else if (_costFunction == CrossEntropy) {
         for (int i = 0; i < outputSize; ++i) {
@@ -226,7 +232,7 @@ snn_type snn::_calculateOutputErrors(const snn_type *expectedOutputs, const snn_
         }
     }
 
-    return sum;
+    return sum / outputSize;
 }
 
 void snn::_applyDeltaWeights()

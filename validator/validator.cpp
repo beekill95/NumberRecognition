@@ -25,7 +25,6 @@ void Validator::validate(Recognizer *recognizer,
     int trainingDataCount = (int) (inputs.size() * trainingPercentage);
     int testingDataCount = inputs.size() - trainingDataCount;
 
-
     trainingImages.reserve(trainingDataCount);
     trainingLabels.reserve(trainingDataCount);
     testingImages.reserve(testingDataCount);
@@ -42,6 +41,10 @@ void Validator::validate(Recognizer *recognizer,
 
     // training
     recognizer->train(trainingImages, trainingLabels);
+
+//    std::cout << "Traing Finish!\nNhap mot so de tiep tuc: ";
+//    int x;
+//    std::cin >> x;
 
     // validate ket qua
     std::vector<std::vector<double> > results;

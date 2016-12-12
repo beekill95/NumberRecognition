@@ -102,6 +102,9 @@ public:
     snn_type getDesiredError() const {return _desiredMeanError;}
     void setDesiredError(snn_type desiredError) {_desiredMeanError = desiredError;}
 
+    // get set batch size
+    void setBatchSize(int batchSize) {_batchSize = batchSize;}
+
     // traing snn
     // inputs: set of input vectors
     // outputs: set of output vectors

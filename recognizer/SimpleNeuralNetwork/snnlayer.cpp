@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cmath>
 #include <random>
+#include <iostream>
 
 #include "snnfunction.h"
 
@@ -25,10 +26,12 @@ snnLayer::snnLayer(int prevLayerPerceptronCount, int perceptronCount)
       _delaWeigths(perceptronCount, prevLayerPerceptronCount + 1)
 {
     _inputs = new snn_type[prevLayerPerceptronCount];
-    memset(_inputs, 0, prevLayerPerceptronCount * sizeof(snn_type));
+//    memset(_inputs, 0, prevLayerPerceptronCount * sizeof(snn_type));
+    std::fill(_inputs, _inputs + prevLayerPerceptronCount, (snn_type) 0.0);
 
     _outputs = new snn_type[perceptronCount];
-    memset(_outputs, 0, perceptronCount * sizeof(snn_type));
+//    memset(_outputs, 0, perceptronCount * sizeof(snn_type));
+    std::fill(_outputs, _outputs + perceptronCount, (snn_type) 0.0);
 }
 
 snnLayer::~snnLayer()
@@ -39,7 +42,8 @@ snnLayer::~snnLayer()
 
 void snnLayer::_resetOutputs()
 {
-    memset(_outputs, 0, _perceptronCount * sizeof(snn_type));
+//    memset(_outputs, 0, _perceptronCount * sizeof(snn_type));
+    std::fill(_outputs, _outputs + _perceptronCount, (snn_type) 0.0);
 }
 
 void snnLayer::_resetDeltaWeights()
@@ -47,7 +51,8 @@ void snnLayer::_resetDeltaWeights()
     for (int i = 0; i < _perceptronCount; ++i) {
         snn_type* deltaWeights = _delaWeigths.row(i);
 
-        memset(deltaWeights, 0, (_prevLayerPerceptronCount + 1) * sizeof(snn_type));
+//        memset(deltaWeights, 0, (_prevLayerPerceptronCount + 1) * sizeof(snn_type));
+        std::fill(deltaWeights, deltaWeights + _prevLayerPerceptronCount + 1, (snn_type) 0.0);
     }
 }
 
@@ -74,6 +79,7 @@ void snnLayer::calculateOutputs(const snn_type *inputs)
         // apply activation function
         switch(_activationFunction) {
         case Sigmoid:
+//            std::cout << "\n\nsum is " << sum << "\nsigmoid is " << sigmoid_func(sum);
             _outputs[perceptron] = sigmoid_func(sum);
             break;
         default:
@@ -108,19 +114,51 @@ void snnLayer::updateDeltaWeights(const snn_type *errors)
         snn_type perceptronError = errors[perceptron];
         snn_type perceptronOutput = _outputs[perceptron];
 
+        if (std::isnan(errors[perceptron]) || std::isinf(errors[perceptron])) {
+            int x = 0;
+            x += 1;
+            std::cout << "x : " << x;
+        }
+
         snn_type* perceptronDeltaWeights = _delaWeigths.row(perceptron);
 
         if (_activationFunction == Sigmoid) {
             // not including bias
             for (int w = 0; w < _prevLayerPerceptronCount; ++w) {
                 snn_type previousDeltaWeight = perceptronDeltaWeights[w];
+
+//                if (std::isnan(previousDeltaWeight) || std::isinf(previousDeltaWeight)) {
+//                    int x = 0;
+//                    x += 1;
+//                    std::cout << "x : " << x;
+//                }
+
                 perceptronDeltaWeights[w] += previousDeltaWeight * _learningMomentum + perceptronError * sigmoid_deri_func(perceptronOutput) * _inputs[w];
+
+//                if (std::isnan(perceptronDeltaWeights[w]) || std::isinf(perceptronDeltaWeights[w])) {
+//                    int x = 0;
+//                    x += 1;
+//                    std::cout << "x : " << x;
+//                }
             }
 
             // calculating deltaweights for bias
             {
                 snn_type previousDeltaWeight = perceptronDeltaWeights[_prevLayerPerceptronCount];
+
+//                if (std::isnan(previousDeltaWeight) || std::isinf(previousDeltaWeight)) {
+//                    int x = 0;
+//                    x += 1;
+//                    std::cout << "x : " << x;
+//                }
+
                 perceptronDeltaWeights[_prevLayerPerceptronCount] += previousDeltaWeight * _learningMomentum + perceptronError * sigmoid_deri_func(perceptronOutput);
+
+//                if (std::isnan(perceptronDeltaWeights[_prevLayerPerceptronCount]) || std::isinf(perceptronDeltaWeights[_prevLayerPerceptronCount])) {
+//                    int x = 0;
+//                    x += 1;
+//                    std::cout << "x : " << x;
+//                }
             }
         }
     }
@@ -139,7 +177,8 @@ void snnLayer::generateRandomWeights(snn_type minimum, snn_type maximum)
 void snnLayer::propagateErrors(const snn_type *errors, snn_type *propagatedErrors) const
 {
     // reset propagated error
-    memset(propagatedErrors, 0, _prevLayerPerceptronCount * sizeof(snn_type));
+//    memset(propagatedErrors, 0, _prevLayerPerceptronCount * sizeof(snn_type));
+    std::fill(propagatedErrors, propagatedErrors + _prevLayerPerceptronCount, (snn_type) 0.0);
 
     for (int i = 0; i < _perceptronCount; ++i) {
         const snn_type* thisPerceptronWeights = _weights.row(i);

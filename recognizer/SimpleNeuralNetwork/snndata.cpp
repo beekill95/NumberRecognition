@@ -3,11 +3,16 @@
 #include <cstring>
 #include <cassert>
 
+#ifdef VERBOSE
+#include <iostream>
+#endif
+
 snnMatrix::snnMatrix(int rows, int cols)
     : _rows(rows), _cols(cols)
 {
     _data = new snn_type[rows * cols];
-    memset(_data, 0, rows * cols * sizeof(snn_type));
+//    memset(_data, 0, rows * cols * sizeof(snn_type));
+    std::fill(_data, _data + rows * cols, (snn_type) 0.0);
 }
 
 snnMatrix::~snnMatrix()
@@ -52,8 +57,14 @@ void snnMatrix::setRow(int rowIndex, int size, const snn_type *row)
     if (size != _cols || rowIndex < 0 || rowIndex >= _rows)
         return;
 
-    snn_type* rowStart = _data + index * _cols;
+    snn_type* rowStart = _data + (rowIndex * _cols);
     memcpy(rowStart, row, _cols * sizeof(snn_type));
+//#ifdef VERBOSE
+//    int minOfTwo = (size > 5) ? 5 : size;
+//    for (int i = 0; i < minOfTwo; ++i)
+//        std::cout << rowStart[i] << ' ';
+//    std::cout << std::endl;
+//#endif
 }
 
 void snnMatrix::setRow(int rowIndex, const std::vector<snn_type> &row)
@@ -61,6 +72,12 @@ void snnMatrix::setRow(int rowIndex, const std::vector<snn_type> &row)
     if (_cols != (int) row.size() || rowIndex < 0 || rowIndex >= _rows)
         return;
 
-    snn_type* rowStart = _data + index * _cols;
-    memcpy(rowStart, row[0], _cols * sizeof(snn_type));
+    snn_type* rowStart = _data + (rowIndex * _cols);
+    memcpy(rowStart, &row[0], _cols * sizeof(snn_type));
+//#ifdef VERBOSE
+//    int minOfTwo = (row.size() > 5) ? 5 : row.size();
+//    for (int i = 0; i < minOfTwo; ++i)
+//        std::cout << rowStart[i] << ' ';
+//    std::cout << std::endl;
+//#endif
 }

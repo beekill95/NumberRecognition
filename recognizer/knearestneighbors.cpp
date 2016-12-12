@@ -8,7 +8,7 @@
 #include <functional>
 
 // helper classes //
-typedef std::pair<double, std::vector<double>* > ElementType;
+typedef std::pair<double, const std::vector<double>* > ElementType;
 typedef std::vector<ElementType> HeapType;
 
 class MaxHeap
@@ -137,7 +137,7 @@ void KNearestNeighbors::train(const std::vector<std::vector<double> > &inputs, c
     this->outputs = outputs;
 }
 
-std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input)
+std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input) const
 {
     MaxHeap maxHeap(k_neighbors);
 
@@ -146,7 +146,7 @@ std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input)
     bool abandon;
     for (int i = 0; i < k_neighbors; ++i) {
         double distance = manhattanDistance(input, inputs[i], std::numeric_limits<double>::max(), abandon);
-        maxHeap.pushHeap(std::make_pair(distance, &outputs[i]));
+        maxHeap.pushHeap(std::make_pair(distance, &outputs.at(i)));
 
         // update max distance
         if (distance > maxDistance)
@@ -158,7 +158,7 @@ std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input)
         double distance = manhattanDistance(input, inputs[i], maxDistance, abandon);
 
         if (!abandon) {
-            maxHeap.removeHeadAndPush(std::make_pair(distance, &outputs[i]));
+            maxHeap.removeHeadAndPush(std::make_pair(distance, &outputs.at(i)));
             maxDistance = maxHeap.currentMaxDistance();
         }
     }

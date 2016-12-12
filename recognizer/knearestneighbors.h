@@ -16,7 +16,7 @@ public:
     ~KNearestNeighbors();
 
     void train(const std::vector<std::vector<double> > &inputs, const std::vector<std::vector<double> > &outputs) override;
-    std::vector<double> predict(const std::vector<double> &input) override;
+    std::vector<double> predict(const std::vector<double> &input) const override;
 };
 
 #endif // KNEARESTNEIGHBORS_H

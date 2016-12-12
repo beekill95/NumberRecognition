@@ -2,6 +2,7 @@
 
 #include "recognizer/recognizer.h"
 #include "recognizer/knearestneighbors.h"
+#include "recognizer/neuralnetwork.h"
 
 #include "featureextraction/pixelfeature/pixelfeature.h"
 #include "featureextraction/statisticalfeatures/statisticalfeature.h"
@@ -57,21 +58,21 @@ int main(int argc, char** argv)
 
     // feature set extractor
     FeatureSetExtractor featureSetExtractor;
-//    featureSetExtractor.addFeature(new PixelExtractor());
+    featureSetExtractor.addFeature(new PixelExtractor());
 
     // add all statistical features
-    featureSetExtractor.addFeature(new AverageEntropy());
-    featureSetExtractor.addFeature(new MeanHistogram());
+//    featureSetExtractor.addFeature(new AverageEntropy());
+//    featureSetExtractor.addFeature(new MeanHistogram());
 //    featureSetExtractor.addFeature(new Moment(5));
-    featureSetExtractor.addFeature(new RelativeSmoothness());
-    featureSetExtractor.addFeature(new UniformityHistogram());
+//    featureSetExtractor.addFeature(new RelativeSmoothness());
+//    featureSetExtractor.addFeature(new UniformityHistogram());
 
-    featureSetExtractor.addFeature(new Contrast(relativeTo));
-    featureSetExtractor.addFeature(new Correlation(relativeTo));
-    featureSetExtractor.addFeature(new Entropy(relativeTo));
-    featureSetExtractor.addFeature(new Homogeneity(relativeTo));
-    featureSetExtractor.addFeature(new MaximumProbability(relativeTo));
-    featureSetExtractor.addFeature(new UniformityCooccurence(relativeTo));
+//    featureSetExtractor.addFeature(new Contrast(relativeTo));
+//    featureSetExtractor.addFeature(new Correlation(relativeTo));
+//    featureSetExtractor.addFeature(new Entropy(relativeTo));
+//    featureSetExtractor.addFeature(new Homogeneity(relativeTo));
+//    featureSetExtractor.addFeature(new MaximumProbability(relativeTo));
+//    featureSetExtractor.addFeature(new UniformityCooccurence(relativeTo));
 
     // trich xuat ra dac trung
     std::vector<std::vector<double> > inputs, outputs;
@@ -82,14 +83,31 @@ int main(int argc, char** argv)
         outputs.push_back({dataLabels[i]});
     }
 
+    // clear images to save some space
+    dataImages.clear();
+    dataLabels.clear();
+
     // k - nearest neighbors
     int neighbourCount = 21;
     Recognizer* kNearestNeighbors = new KNearestNeighbors(neighbourCount);
 
+    // neural network
+    int inputSize = 784;
+    std::vector<int> hiddenLayers;
+    NeuralNetwork* neuralNetwork = new NeuralNetwork(inputSize, hiddenLayers);
+    neuralNetwork->setMaxEpochs(300);
+    neuralNetwork->setLearningMomentum(0.0);
+    neuralNetwork->setLearningRate(0.01);
+    neuralNetwork->setDesiredError(0.15);
+//    neuralNetwork->setLearningMomentum(0.9);
+    neuralNetwork->setBatchSize(480);
+    neuralNetwork->setTrainingType(BatchTraining);
+
     // training and validating
     Validator validator;
-    validator.validate(kNearestNeighbors, inputs, outputs);
+    validator.validate(neuralNetwork, inputs, outputs);
 
+    delete neuralNetwork;
     delete kNearestNeighbors;
 #endif
 

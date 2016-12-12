@@ -81,7 +81,7 @@ public:
 
     // get and set current layer learning momentum
     snn_type getLearningMomentum() const {return _learningMomentum;}
-    void setLearningMomentum(snn_type learningMomentum) {_learningMomentum = learningMomentum;}
+    void setLearningMomentum(snn_type learningMomentum) {_learningMomentum = 0.0 /* error in implementation */;}
 
     // get current layer's perceptron count
     int getPerceptronCount() const {return _perceptronCount;}
