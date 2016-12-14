@@ -17,8 +17,8 @@ void simpleTest(int size)
 //    input.at(4, 0) = 0.75; output.at(4, 0) = 0.75;
 
 
-    double step = 1.0 / size;
-    double curr = 0.0;
+    float step = 1.0 / size;
+    float curr = 0.0;
     for (int i = 0; i < size; ++i) {
         input.at(i, 0) = curr;
         output.at(i, 0) = curr;
@@ -32,11 +32,11 @@ void simpleTest(int size)
     //neuralNetwork.setTrainingType(StochasticTraining);
     neuralNetwork.train(&input, &output);
 
-    double* out = new double[1];
+    float* out = new float[1];
     for (int i = 0; i < size; ++i) {
         neuralNetwork.predict(input.row(i), out);
 
-        double diff = out[0] - output.at(i, 0);
+        float diff = out[0] - output.at(i, 0);
         std::cout << "Network result: " << out[0]
                   << "\tReal result: " << output.at(i, 0)
                   << "\tDifference is: " << fabs(diff) << '\n';
@@ -64,11 +64,11 @@ void xorTest()
     neuralNetwork.setTrainingType(BatchTraining);
     neuralNetwork.train(&input, &output);
 
-    double* out = new double[1];
+    float* out = new float[1];
     for (int i = 0; i < 4; ++i) {
         neuralNetwork.predict(input.row(i), out);
 
-        double diff = out[0] - output.at(i, 0);
+        float diff = out[0] - output.at(i, 0);
         std::cout << "Network result: " << out[0]
                   << "\tReal result: " << output.at(i, 0)
                   << "\tDifference is: " << fabs(diff) << '\n';
@@ -91,7 +91,7 @@ void simpleClassificationTest(int size)
 //    inputs.at(3, 0) = 4.8; outputs.at(3, 0) = 0.0; outputs.at(3, 1) = 1.0;
 
     for (int i = 0; i < size; ++i) {
-        double val = 1.0 * rand() / RAND_MAX;
+        float val = 1.0 * rand() / RAND_MAX;
 
         inputs.at(i, 0) = val;
 
@@ -107,7 +107,7 @@ void simpleClassificationTest(int size)
     neuralNetwork.setTrainingType(BatchTraining);
     neuralNetwork.train(&inputs, &outputs);
 
-    double* out = new double[2];
+    float* out = new float[2];
     for (int i = 0; i < size; ++i) {
         neuralNetwork.predict(inputs.row(i), out);
 
@@ -134,13 +134,13 @@ void circleClassificationTest(int size)
 //    inputs.at(3, 0) = 4.8; outputs.at(3, 0) = 0.0; outputs.at(3, 1) = 1.0;
 
     for (int i = 0; i < size; ++i) {
-        double val1 = 1.0 * rand() / RAND_MAX;
-        double val2 = 1.0 * rand() / RAND_MAX;
+        float val1 = 1.0 * rand() / RAND_MAX;
+        float val2 = 1.0 * rand() / RAND_MAX;
 
         inputs.at(i, 0) = val1;
         inputs.at(i, 1) = val2;
 
-        double dist = sqrt(val1 * val1 + val2 * val2);
+        float dist = sqrt(val1 * val1 + val2 * val2);
 
         outputs.at(i, 0) = (dist < 0.5) ? 1.0 : 0.0;
         outputs.at(i, 1) = (dist < 0.5) ? 0.0 : 1.0;
@@ -154,7 +154,7 @@ void circleClassificationTest(int size)
     neuralNetwork.setTrainingType(BatchTraining);
     neuralNetwork.train(&inputs, &outputs);
 
-    double* out = new double[2];
+    float* out = new float[2];
     for (int i = 0; i < size; ++i) {
         neuralNetwork.predict(inputs.row(i), out);
 
@@ -182,14 +182,14 @@ void circleWithNoiseClassificationTest(int size)
 //    inputs.at(3, 0) = 4.8; outputs.at(3, 0) = 0.0; outputs.at(3, 1) = 1.0;
 
     for (int i = 0; i < size; ++i) {
-        double val1 = 1.0 * rand() / RAND_MAX;
-        double val2 = 1.0 * rand() / RAND_MAX;
-        double noise = (1.0 * rand() / RAND_MAX) / 5  - 1.0 / 10;
+        float val1 = 1.0 * rand() / RAND_MAX;
+        float val2 = 1.0 * rand() / RAND_MAX;
+        float noise = (1.0 * rand() / RAND_MAX) / 5  - 1.0 / 10;
 
         inputs.at(i, 0) = val1 + noise;
         inputs.at(i, 1) = val2 + noise;
 
-        double dist = sqrt(val1 * val1 + val2 * val2);
+        float dist = sqrt(val1 * val1 + val2 * val2);
 
         outputs.at(i, 0) = (dist < 0.5) ? 1.0 : 0.0;
         outputs.at(i, 1) = (dist < 0.5) ? 0.0 : 1.0;
@@ -203,7 +203,7 @@ void circleWithNoiseClassificationTest(int size)
     neuralNetwork.setTrainingType(BatchTraining);
     neuralNetwork.train(&inputs, &outputs);
 
-    double* out = new double[2];
+    float* out = new float[2];
     for (int i = 0; i < size; ++i) {
         neuralNetwork.predict(inputs.row(i), out);
 

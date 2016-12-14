@@ -2,6 +2,8 @@
 #define VALIDATOR_H
 
 #include "recognizer/recognizer.h"
+#include "definition.h"
+
 #include "vector"
 
 class Validator
@@ -13,8 +15,8 @@ public:
     Validator();
 
     void validate(Recognizer* recognizer,
-                  const std::vector<std::vector<double> >& inputs,
-                  const std::vector<std::vector<double> >& outputs,
+                  const std::vector<std::vector<val_type> >& inputs,
+                  const std::vector<std::vector<val_type> >& outputs,
                   float trainingPercentage = 0.8f);
 };
 

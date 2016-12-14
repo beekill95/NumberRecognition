@@ -8,7 +8,7 @@ TEST(MomentTest, TestWithSoNam) {
     cv::Mat image = cv::imread(SO_NAM_PATH, CV_LOAD_IMAGE_GRAYSCALE);
 
     Moment moment({3, 4, 5});
-    std::vector<double> moments = moment.extractFeature(image);
+    std::vector<val_type> moments = moment.extractFeature(image);
 
     ASSERT_EQ(3, moments.size());
     EXPECT_NEAR(1.0398e+06, moments[0], 0.5);

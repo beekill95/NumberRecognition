@@ -17,7 +17,7 @@ int ReverseInt (int i)
     return((int) ch1 << 24) + ((int)ch2 << 16) + ((int)ch3 << 8) + ch4;
 }
 
-void read_Mnist(const string& filename, vector<vector<double> > &vec)
+void read_Mnist(const string& filename, vector<vector<float> > &vec)
 {
     ifstream file (filename, ios::binary);
     if (file.is_open())
@@ -36,14 +36,14 @@ void read_Mnist(const string& filename, vector<vector<double> > &vec)
         n_cols = ReverseInt(n_cols);
         for(int i = 0; i < number_of_images; ++i)
         {
-            vector<double> tp;
+            vector<float> tp;
             for(int r = 0; r < n_rows; ++r)
             {
                 for(int c = 0; c < n_cols; ++c)
                 {
                     unsigned char temp = 0;
                     file.read((char*) &temp, sizeof(temp));
-                    tp.push_back((double)temp);
+                    tp.push_back((float)temp);
                 }
             }
             vec.push_back(tp);
@@ -117,15 +117,15 @@ void read_Mnist(const string& filename, vector<cv::Mat> &vec){
 //    }
 //}
 
-void read_Mnist_Label(const string& filename, vector<double> &vec)
+void read_Mnist_Label(const string& filename, vector<float> &vec)
 {
     ifstream file (filename, ios::binary);
     if (file.is_open())
     {
         int magic_number = 0;
         int number_of_images = 0;
-        int n_rows = 0;
-        int n_cols = 0;
+//        int n_rows = 0;
+//        int n_cols = 0;
         file.read((char*) &magic_number, sizeof(magic_number));
         magic_number = ReverseInt(magic_number);
         file.read((char*) &number_of_images,sizeof(number_of_images));
@@ -134,7 +134,7 @@ void read_Mnist_Label(const string& filename, vector<double> &vec)
         {
             unsigned char temp = 0;
             file.read((char*) &temp, sizeof(temp));
-            vec[i]= (double)temp;
+            vec[i]= (float)temp;
         }
     }
 }

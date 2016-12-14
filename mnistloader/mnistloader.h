@@ -12,10 +12,10 @@
 #include <string>
 #include <vector>
 
-void read_Mnist(const std::string& filename, std::vector<std::vector<double> > &vec);
+void read_Mnist(const std::string& filename, std::vector<std::vector<float> > &vec);
 void read_Mnist(const std::string& filename, std::vector<cv::Mat> &vec);
 
-void read_Mnist_Label(const std::string& filename, std::vector<double> &vec);
+void read_Mnist_Label(const std::string& filename, std::vector<float> &vec);
 
 /**
 * Sample code

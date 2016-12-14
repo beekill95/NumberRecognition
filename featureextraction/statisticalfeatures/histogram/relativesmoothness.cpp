@@ -1,24 +1,41 @@
 #include "relativesmoothness.h"
 
-std::vector<double> RelativeSmoothness::extractFeature(const cv::Mat &image) const
+std::vector<val_type> RelativeSmoothness::extractFeature(const cv::Mat &image) const
 {
     // calculate the histogram distribution
-    float histogramDistribution[256];
+    val_type histogramDistribution[256];
     calculateHistogram(image, histogramDistribution);
 
     // calculate the mean
-    double mean = histogramMean(histogramDistribution);
+    val_type mean = meanHistogram(histogramDistribution);
 
     // calculate the variance
-    double variance = 0.0;
+    val_type variance = 0.0;
     for (int i = 0; i < 256; ++i) {
-        double diff = mean - i;
+        val_type diff = mean - i;
         variance += diff * diff * histogramDistribution[i];
     }
 
     // normalize variance
-    variance = variance / (255 * 255);
+    variance /= (255 * 255);
 
     return {1.0 - 1.0/(1 + variance)};
 }
 
+std::vector<val_type> RelativeSmoothness::extractFeature(const val_type *histogram) const
+{
+    // calculate the mean
+    val_type mean = meanHistogram(histogram);
+
+    // calculate the variance
+    val_type variance = 0.0;
+    for (int i = 0; i < 256; ++i) {
+        val_type diff = mean - i;
+        variance += diff * diff * histogram[i];
+    }
+
+    // normalize variance
+    variance /= (255 * 255);
+
+    return {1.0 - 1.0/(1 + variance)};
+}

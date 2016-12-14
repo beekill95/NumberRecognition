@@ -11,8 +11,8 @@ snnMatrix::snnMatrix(int rows, int cols)
     : _rows(rows), _cols(cols)
 {
     _data = new snn_type[rows * cols];
-//    memset(_data, 0, rows * cols * sizeof(snn_type));
-    std::fill(_data, _data + rows * cols, (snn_type) 0.0);
+    memset(_data, 0, rows * cols * sizeof(snn_type));
+//    std::fill(_data, _data + rows * cols, (snn_type) 0.0);
 }
 
 snnMatrix::~snnMatrix()

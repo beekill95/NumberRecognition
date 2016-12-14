@@ -3,11 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
-CooccurrenceMatrixBasedDescriptor::CooccurrenceMatrixBasedDescriptor(relative_operator _operator)
-    : _operator(_operator)
-{ }
-
-cv::Mat CooccurrenceMatrixBasedDescriptor::calculateOccurenceMatrix(const cv::Mat &image) const
+cv::Mat calculateCooccurenceMatrix(relative_operator op, const cv::Mat &image)
 {
     cv::Mat cooccurenceMatrix(256, 256, CV_32SC1, cvScalar(0));
 
@@ -23,7 +19,7 @@ cv::Mat CooccurrenceMatrixBasedDescriptor::calculateOccurenceMatrix(const cv::Ma
         for (int c = 0; c < image.cols; ++c) {
             unsigned char pixel = image.at<unsigned char>(r, c);
 
-            cv::Point relativePixelCoord = _operator(cv::Point(r, c));
+            cv::Point relativePixelCoord = op(cv::Point(r, c));
             if (relativePixelCoord.x >= 0 && relativePixelCoord.x < image.rows
                     && relativePixelCoord.y >= 0 && relativePixelCoord.y < image.cols) {
                 unsigned char relativePixel = image.at<unsigned char>(relativePixelCoord.x, relativePixelCoord.y);
@@ -36,7 +32,7 @@ cv::Mat CooccurrenceMatrixBasedDescriptor::calculateOccurenceMatrix(const cv::Ma
     return cooccurenceMatrix;
 }
 
-cv::Mat CooccurrenceMatrixBasedDescriptor::calculateProbabilityOccurenceMatrix(const cv::Mat &image) const
+cv::Mat calculateProbabilityCooccurenceMatrix(relative_operator op, const cv::Mat &image)
 {
 //    unsigned char data[][6] = {
 //        {0, 0, 6, 4, 2, 1},
@@ -53,9 +49,9 @@ cv::Mat CooccurrenceMatrixBasedDescriptor::calculateProbabilityOccurenceMatrix(c
 //    cv::imshow("original", image);
 //    cv::waitKey(0);
 
-    cv::Mat cooccurrenceMatrix = calculateOccurenceMatrix(image);
+    cv::Mat cooccurrenceMatrix = calculateCooccurenceMatrix(op, image);
 
-    cv::Mat result;
+//    cv::Mat result;
 
 
 //    std::cout << '\n' << '\n' << cooccurrenceMatrix << std::endl;
@@ -89,4 +85,48 @@ cv::Mat CooccurrenceMatrixBasedDescriptor::calculateProbabilityOccurenceMatrix(c
 //    cv::waitKey(0);
 
     return probabilityMatrix;
+}
+
+CooccurrenceMatrixBasedDescriptor::CooccurrenceMatrixBasedDescriptor(relative_operator _operator)
+    : _operator(_operator)
+{ }
+
+cv::Mat CooccurrenceMatrixBasedDescriptor::calculateCooccurenceMatrix(const cv::Mat &image) const
+{
+    return ::calculateCooccurenceMatrix(_operator, image);
+}
+
+cv::Mat CooccurrenceMatrixBasedDescriptor::calculateProbabilityCooccurenceMatrix(const cv::Mat &image) const
+{
+    return ::calculateProbabilityCooccurenceMatrix(_operator, image);
+}
+
+CooccurrenceMatrixBasedFeatureSet::CooccurrenceMatrixBasedFeatureSet(relative_operator _operator)
+    : _operator(_operator)
+{ }
+
+void CooccurrenceMatrixBasedFeatureSet::addFeature(FeatureExtractor *featureExtractor)
+{
+    // check whether current feature belongs to HistogramBasedDescriptor
+    CooccurrenceMatrixBasedDescriptor* feature = dynamic_cast<CooccurrenceMatrixBasedDescriptor*>(featureExtractor);
+
+    // if so
+    if (feature != 0)
+        FeatureSetExtractor::addFeature(featureExtractor);
+}
+
+std::vector<val_type> CooccurrenceMatrixBasedFeatureSet::extractFeature(const cv::Mat &image) const
+{
+    cv::Mat cooccurProbMat = calculateProbabilityCooccurenceMatrix(_operator, image);
+
+    std::vector<val_type> features;
+    features.reserve(getFeatureCount());
+    for (auto it = featureExtractors.cbegin(); it != featureExtractors.cend(); ++it) {
+        CooccurrenceMatrixBasedDescriptor* descriptor = (CooccurrenceMatrixBasedDescriptor*) (*it);
+
+        std::vector<val_type> f = descriptor->extractFeature(image, cooccurProbMat);
+        features.insert(features.end(), f.begin(), f.end());
+    }
+
+    return features;
 }

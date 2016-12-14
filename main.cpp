@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     dataImages.reserve(IMAGE_COUNT);
     read_Mnist(IMAGE_TRAINING_DATA, dataImages);
 
-    std::vector<double> dataLabels(IMAGE_COUNT);
+    std::vector<float> dataLabels(IMAGE_COUNT);
     read_Mnist_Label(LABEL_TRAINING_DATA, dataLabels);
 
     // check whether the data file is loaded successfully
@@ -58,28 +58,33 @@ int main(int argc, char** argv)
 
     // feature set extractor
     FeatureSetExtractor featureSetExtractor;
-    featureSetExtractor.addFeature(new PixelExtractor());
+//    featureSetExtractor.addFeature(new PixelExtractor(784));
 
     // add all statistical features
-//    featureSetExtractor.addFeature(new AverageEntropy());
-//    featureSetExtractor.addFeature(new MeanHistogram());
-//    featureSetExtractor.addFeature(new Moment(5));
-//    featureSetExtractor.addFeature(new RelativeSmoothness());
-//    featureSetExtractor.addFeature(new UniformityHistogram());
+    HistogramBaseFeatureSet* histogramFeatureSet = new HistogramBaseFeatureSet();
+    histogramFeatureSet->addFeature(new AverageEntropy());
+    histogramFeatureSet->addFeature(new MeanHistogram());
+    histogramFeatureSet->addFeature(new Moment(5));
+    histogramFeatureSet->addFeature(new RelativeSmoothness());
+    histogramFeatureSet->addFeature(new UniformityHistogram());
 
-//    featureSetExtractor.addFeature(new Contrast(relativeTo));
-//    featureSetExtractor.addFeature(new Correlation(relativeTo));
-//    featureSetExtractor.addFeature(new Entropy(relativeTo));
-//    featureSetExtractor.addFeature(new Homogeneity(relativeTo));
-//    featureSetExtractor.addFeature(new MaximumProbability(relativeTo));
-//    featureSetExtractor.addFeature(new UniformityCooccurence(relativeTo));
+    CooccurrenceMatrixBasedFeatureSet* cooccurMatFeatureSet = new CooccurrenceMatrixBasedFeatureSet(relativeTo);
+    cooccurMatFeatureSet->addFeature(new Contrast(relativeTo));
+    cooccurMatFeatureSet->addFeature(new Correlation(relativeTo));
+    cooccurMatFeatureSet->addFeature(new Entropy(relativeTo));
+    cooccurMatFeatureSet->addFeature(new Homogeneity(relativeTo));
+    cooccurMatFeatureSet->addFeature(new MaximumProbability(relativeTo));
+    cooccurMatFeatureSet->addFeature(new UniformityCooccurence(relativeTo));
+
+    featureSetExtractor.addFeature(histogramFeatureSet);
+    featureSetExtractor.addFeature(cooccurMatFeatureSet);
 
     // trich xuat ra dac trung
-    std::vector<std::vector<double> > inputs, outputs;
+    std::vector<std::vector<val_type> > inputs, outputs;
     inputs.reserve(IMAGE_COUNT);
     outputs.reserve(IMAGE_COUNT);
     for (int i = 0; i < IMAGE_COUNT; ++i) {
-        inputs.push_back(featureSetExtractor.extractFeatures(dataImages[i]));
+        inputs.push_back(featureSetExtractor.extractFeature(dataImages[i]));
         outputs.push_back({dataLabels[i]});
     }
 
@@ -89,26 +94,21 @@ int main(int argc, char** argv)
 
     // k - nearest neighbors
     int neighbourCount = 21;
-    Recognizer* kNearestNeighbors = new KNearestNeighbors(neighbourCount);
+    KNearestNeighbors kNearestNeighbors(neighbourCount);
 
     // neural network
-    int inputSize = 784;
-    std::vector<int> hiddenLayers;
-    NeuralNetwork* neuralNetwork = new NeuralNetwork(inputSize, hiddenLayers);
-    neuralNetwork->setMaxEpochs(300);
-    neuralNetwork->setLearningMomentum(0.0);
-    neuralNetwork->setLearningRate(0.01);
-    neuralNetwork->setDesiredError(0.15);
-//    neuralNetwork->setLearningMomentum(0.9);
-    neuralNetwork->setBatchSize(480);
-    neuralNetwork->setTrainingType(BatchTraining);
+    std::vector<int> hiddenLayers = {50, 50};
+    NeuralNetwork neuralNetwork(featureSetExtractor.getFeatureCount(), hiddenLayers);
+    neuralNetwork.setMaxEpochs(50);
+    neuralNetwork.setLearningMomentum(0.0);
+    neuralNetwork.setLearningRate(0.0001);
+    neuralNetwork.setDesiredError(0.15);
+    neuralNetwork.setBatchSize(480);
+    neuralNetwork.setTrainingType(BatchTraining);
 
     // training and validating
     Validator validator;
-    validator.validate(neuralNetwork, inputs, outputs);
-
-    delete neuralNetwork;
-    delete kNearestNeighbors;
+    validator.validate(&neuralNetwork, inputs, outputs);
 #endif
 
     return 0;

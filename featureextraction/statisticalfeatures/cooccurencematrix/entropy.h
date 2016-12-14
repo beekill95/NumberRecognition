@@ -9,7 +9,9 @@ public:
     Entropy(relative_operator _operator);
     ~Entropy();
 
-    std::vector<double> extractFeature(const cv::Mat &image) const override;
+    std::vector<val_type> extractFeature(const cv::Mat& image) const override;
+    std::vector<val_type> extractFeature(const cv::Mat& image, const cv::Mat& cooccurMatrix) const override;
+    int getFeatureCount() const override {return 1;}
 };
 
 #endif // ENTROPY_H

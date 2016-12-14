@@ -8,7 +8,7 @@
 #include <functional>
 
 // helper classes //
-typedef std::pair<double, const std::vector<double>* > ElementType;
+typedef std::pair<val_type, const std::vector<val_type>* > ElementType;
 typedef std::vector<ElementType> HeapType;
 
 class MaxHeap
@@ -25,7 +25,7 @@ public:
     ElementType popHeap();
 
     ElementType removeHeadAndPush(const ElementType& element);
-    double currentMaxDistance() const;
+    val_type currentMaxDistance() const;
     bool isEmpty() const;
 };
 
@@ -64,7 +64,7 @@ ElementType MaxHeap::removeHeadAndPush(const ElementType &element)
     return popElement;
 }
 
-double MaxHeap::currentMaxDistance() const
+val_type MaxHeap::currentMaxDistance() const
 {
     return heap[0].first;
 }
@@ -74,9 +74,9 @@ bool MaxHeap::isEmpty() const
     return heap.size() == 0;
 }
 
-std::vector<double> getMajorityLabel(MaxHeap& heap)
+std::vector<val_type> getMajorityLabel(MaxHeap& heap)
 {
-    std::map<std::vector<double>, int> counter;
+    std::map<std::vector<val_type>, int> counter;
 
     while (!heap.isEmpty()) {
         ElementType element = heap.popHeap();
@@ -88,7 +88,7 @@ std::vector<double> getMajorityLabel(MaxHeap& heap)
         }
     }
 
-    std::map<std::vector<double>, int>::const_iterator maxIter = counter.cbegin();
+    std::map<std::vector<val_type>, int>::const_iterator maxIter = counter.cbegin();
     auto it = maxIter; ++it;
     for (; it != counter.cend(); ++it) {
         if (it->second > maxIter->second)
@@ -98,9 +98,9 @@ std::vector<double> getMajorityLabel(MaxHeap& heap)
     return maxIter->first;
 }
 
-double manhattanDistance(const std::vector<double>& first, const std::vector<double>& second, double currentMaxDistance, bool& abandon)
+val_type manhattanDistance(const std::vector<val_type>& first, const std::vector<val_type>& second, val_type currentMaxDistance, bool& abandon)
 {
-    double currentDistance = 0.0;
+    val_type currentDistance = 0.0;
     abandon = false;
     for (size_t i = 0; i < first.size(); ++i) {
         currentDistance += fabs(first[i] - second[i]);
@@ -131,21 +131,21 @@ KNearestNeighbors::~KNearestNeighbors()
     outputs.clear();
 }
 
-void KNearestNeighbors::train(const std::vector<std::vector<double> > &inputs, const std::vector<std::vector<double> > &outputs)
+void KNearestNeighbors::train(const std::vector<std::vector<val_type> > &inputs, const std::vector<std::vector<val_type> > &outputs)
 {
     this->inputs = inputs;
     this->outputs = outputs;
 }
 
-std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input) const
+std::vector<val_type> KNearestNeighbors::predict(const std::vector<val_type> &input) const
 {
     MaxHeap maxHeap(k_neighbors);
 
     // calculate the distance between input and first k_neighbors
-    double maxDistance = -1.0; // for early abandon
+    val_type maxDistance = -1.0; // for early abandon
     bool abandon;
     for (int i = 0; i < k_neighbors; ++i) {
-        double distance = manhattanDistance(input, inputs[i], std::numeric_limits<double>::max(), abandon);
+        val_type distance = manhattanDistance(input, inputs[i], std::numeric_limits<val_type>::max(), abandon);
         maxHeap.pushHeap(std::make_pair(distance, &outputs.at(i)));
 
         // update max distance
@@ -155,7 +155,7 @@ std::vector<double> KNearestNeighbors::predict(const std::vector<double> &input)
 
     // calculate the distance between input and the rest
     for (size_t i = k_neighbors; i < inputs.size(); ++i) {
-        double distance = manhattanDistance(input, inputs[i], maxDistance, abandon);
+        val_type distance = manhattanDistance(input, inputs[i], maxDistance, abandon);
 
         if (!abandon) {
             maxHeap.removeHeadAndPush(std::make_pair(distance, &outputs.at(i)));

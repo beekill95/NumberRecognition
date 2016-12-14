@@ -7,19 +7,19 @@ Correlation::Correlation(relative_operator _operator)
 Correlation::~Correlation()
 { }
 
-double sum(const float* array, int size = 256)
+val_type sum(const float* array, int size = 256)
 {
-    double total = 0.0;
+    val_type total = 0.0;
     for (int i = 0; i < size; ++i)
         total += array[i];
     return total;
 }
 
-double calculateMeanRow(const cv::Mat& probabilityMatrix)
+val_type calculateMeanRow(const cv::Mat& probabilityMatrix)
 {
-    double meanRow = 0.0;
+    val_type meanRow = 0.0;
     for (int r = 0; r < probabilityMatrix.rows; ++r) {
-        double totalColumn = 0.0;
+        val_type totalColumn = 0.0;
 
         const float* row = probabilityMatrix.ptr<float>(r);
         for (int c = 0; c < probabilityMatrix.cols; ++c)
@@ -30,11 +30,11 @@ double calculateMeanRow(const cv::Mat& probabilityMatrix)
     return meanRow;
 }
 
-double calculateMeanColumn(const cv::Mat& probabilityMatrix)
+val_type calculateMeanColumn(const cv::Mat& probabilityMatrix)
 {
-    double meanColumn = 0.0;
+    val_type meanColumn = 0.0;
     for (int c = 0; c < probabilityMatrix.cols; ++c) {
-        double totalRow = 0.0;
+        val_type totalRow = 0.0;
 
         for (int r = 0; r < probabilityMatrix.rows; ++r)
             totalRow += probabilityMatrix.at<float>(r, c);
@@ -45,12 +45,12 @@ double calculateMeanColumn(const cv::Mat& probabilityMatrix)
     return meanColumn;
 }
 
-double calculateVarianceRow(const cv::Mat& probabilityMatrix, double meanRow)
+val_type calculateVarianceRow(const cv::Mat& probabilityMatrix, double meanRow)
 {
-    double varianceRow = 0.0;
+    val_type varianceRow = 0.0;
 
     for (int r = 0; r < probabilityMatrix.rows; ++r) {
-        double totalColumn = 0.0;
+        val_type totalColumn = 0.0;
 
         const float* row = probabilityMatrix.ptr<float>(r);
         for (int c = 0; c < probabilityMatrix.cols; ++c)
@@ -62,12 +62,12 @@ double calculateVarianceRow(const cv::Mat& probabilityMatrix, double meanRow)
     return varianceRow;
 }
 
-double calculateVarianceColumn(const cv::Mat& probabilityMatrix, double meanColumn)
+val_type calculateVarianceColumn(const cv::Mat& probabilityMatrix, double meanColumn)
 {
-    double varianceCol = 0.0;
+    val_type varianceCol = 0.0;
 
     for (int c = 0; c < probabilityMatrix.cols; ++c) {
-        double totalRow = 0.0;
+        val_type totalRow = 0.0;
 
         for (int r = 0; r < probabilityMatrix.rows; ++r)
             totalRow += probabilityMatrix.at<float>(r, c);
@@ -78,25 +78,50 @@ double calculateVarianceColumn(const cv::Mat& probabilityMatrix, double meanColu
     return varianceCol;
 }
 
-std::vector<double> Correlation::extractFeature(const cv::Mat &image) const
+std::vector<val_type> Correlation::extractFeature(const cv::Mat &image) const
 {
-    cv::Mat probabilityMatrix = calculateProbabilityOccurenceMatrix(image);
+    cv::Mat probabilityMatrix = calculateProbabilityCooccurenceMatrix(image);
 
     // calculate mean value in row and column
-    double meanRow = calculateMeanRow(probabilityMatrix);
-    double meanCol = calculateMeanColumn(probabilityMatrix);
+    val_type meanRow = calculateMeanRow(probabilityMatrix);
+    val_type meanCol = calculateMeanColumn(probabilityMatrix);
 
     // calculate variance value in row and column
-    double varianceRow = calculateVarianceRow(probabilityMatrix, meanRow);
-    double varianceCol = calculateVarianceColumn(probabilityMatrix, meanCol);
+    val_type varianceRow = calculateVarianceRow(probabilityMatrix, meanRow);
+    val_type varianceCol = calculateVarianceColumn(probabilityMatrix, meanCol);
 
     // calculate the correlation
-    double correlation = 0.0;
+    val_type correlation = 0.0;
     for (int r = 0; r < 256; ++r) {
         const float* row = probabilityMatrix.ptr<float>(r);
 
         for (int c = 0; c < 256; ++c) {
             float prob = row[c];
+
+            correlation += (r - meanRow) * (c - meanCol) * prob;
+        }
+    }
+
+    return {correlation / (varianceCol * varianceRow)};
+}
+
+std::vector<val_type> Correlation::extractFeature(const cv::Mat &image, const cv::Mat &cooccurMatrix) const
+{
+    // calculate mean value in row and column
+    val_type meanRow = calculateMeanRow(cooccurMatrix);
+    val_type meanCol = calculateMeanColumn(cooccurMatrix);
+
+    // calculate variance value in row and column
+    val_type varianceRow = calculateVarianceRow(cooccurMatrix, meanRow);
+    val_type varianceCol = calculateVarianceColumn(cooccurMatrix, meanCol);
+
+    // calculate the correlation
+    val_type correlation = 0.0;
+    for (int r = 0; r < 256; ++r) {
+        const float* row = cooccurMatrix.ptr<float>(r);
+
+        for (int c = 0; c < 256; ++c) {
+            val_type prob = row[c];
 
             correlation += (r - meanRow) * (c - meanCol) * prob;
         }

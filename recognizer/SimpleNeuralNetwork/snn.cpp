@@ -86,8 +86,8 @@ void snn::train(const snnMatrix *inputs, const snnMatrix *outputs)
 
         for (int r = 0; r < inputs->getRows(); ++r) {
             const snn_type* input = inputs->row(r);
-//            memset(networkOutputs, 0, sizeof(snn_type) * outputs->getCols());
-            std::fill(networkOutputs, networkOutputs + outputs->getCols(), (snn_type) 0.0);
+            memset(networkOutputs, 0, sizeof(snn_type) * outputs->getCols());
+//            std::fill(networkOutputs, networkOutputs + outputs->getCols(), (snn_type) 0.0);
 
             // feed forward phase
             _feedForward(input, networkOutputs);

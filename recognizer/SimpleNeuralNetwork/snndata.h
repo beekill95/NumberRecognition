@@ -3,7 +3,7 @@
 
 #include <vector>
 
-typedef double snn_type;
+typedef float snn_type;
 
 enum snn_activation_function
 {

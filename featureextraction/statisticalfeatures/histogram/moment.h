@@ -22,7 +22,9 @@ public:
     Moment(const std::vector<int>& moments);
     ~Moment();
 
-    std::vector<double> extractFeature(const cv::Mat &image) const override;
+    int getFeatureCount() const override {return nthMoments.size();}
+    std::vector<val_type> extractFeature(const cv::Mat &image) const override;
+    std::vector<val_type> extractFeature(const val_type* histogram) const override;
 };
 
 #endif // MOMENT_H

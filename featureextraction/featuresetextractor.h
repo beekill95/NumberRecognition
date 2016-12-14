@@ -6,21 +6,22 @@
 #include <opencv2/core/core.hpp>
 #include <vector>
 
-class FeatureSetExtractor
+class FeatureSetExtractor : public FeatureExtractor
 {
-private:
+protected:
     std::vector<FeatureExtractor* > featureExtractors;
 
 public:
     FeatureSetExtractor();
     //FeatureSetExtractor(const std::vector<FeatureExtractor*>& featureExtractors);
     FeatureSetExtractor(std::vector<FeatureExtractor *>&& featureExtractors);
-    ~FeatureSetExtractor();
+    virtual ~FeatureSetExtractor();
 
-    void addFeature(FeatureExtractor* featureExtractor);
+    virtual void addFeature(FeatureExtractor* featureExtractor);
+    int getFeatureCount() const override;
 
-    std::vector<double> extractFeatures(const cv::Mat& image) const;
-    std::vector<std::vector<double> > batchExtractFeatures(const std::vector<cv::Mat>& images) const;
+    virtual std::vector<val_type> extractFeature(const cv::Mat& image) const;
+//    std::vector<std::vector<val_type> > batchExtractFeatures(const std::vector<cv::Mat>& images) const;
 };
 
 #endif // FEATURESETEXTRACTOR_H

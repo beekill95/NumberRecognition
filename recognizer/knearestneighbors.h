@@ -8,15 +8,15 @@ class KNearestNeighbors : public Recognizer
 private:
     int k_neighbors;
 
-    std::vector<std::vector<double> > inputs;
-    std::vector<std::vector<double> > outputs;
+    std::vector<std::vector<val_type> > inputs;
+    std::vector<std::vector<val_type> > outputs;
 
 public:
     KNearestNeighbors(int k_neighbors);
     ~KNearestNeighbors();
 
-    void train(const std::vector<std::vector<double> > &inputs, const std::vector<std::vector<double> > &outputs) override;
-    std::vector<double> predict(const std::vector<double> &input) const override;
+    void train(const std::vector<std::vector<val_type> > &inputs, const std::vector<std::vector<val_type> > &outputs) override;
+    std::vector<val_type> predict(const std::vector<val_type> &input) const override;
 };
 
 #endif // KNEARESTNEIGHBORS_H

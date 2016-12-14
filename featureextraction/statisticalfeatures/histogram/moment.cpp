@@ -21,9 +21,9 @@ Moment::~Moment()
     nthMoments.clear();
 }
 
-double extractMomentNth(double mean, float histogramDistribution[], int momentNth)
+val_type extractMomentNth(val_type mean, const val_type* histogramDistribution, int momentNth)
 {
-    double nthMoment = 0.0;
+    val_type nthMoment = 0.0;
     for (int i = 0; i < 256; ++i) {
         nthMoment += pow(i - mean, momentNth) * histogramDistribution[i];
     }
@@ -31,19 +31,32 @@ double extractMomentNth(double mean, float histogramDistribution[], int momentNt
     return nthMoment;
 }
 
-std::vector<double> Moment::extractFeature(const cv::Mat &image) const
+std::vector<val_type> Moment::extractFeature(const cv::Mat &image) const
 {
     // calculate histogram
-    float histogramDistribution[256];
+    val_type histogramDistribution[256];
     calculateHistogram(image, histogramDistribution);
 
     // calculate mean histogram
-    double mean = histogramMean(histogramDistribution);
+    val_type mean = meanHistogram(histogramDistribution);
 
     // calculate moments
-    std::vector<double> moments(nthMoments.size());
+    std::vector<val_type> moments(nthMoments.size());
     for (size_t i = 0; i < nthMoments.size(); ++i)
         moments[i] = extractMomentNth(mean, histogramDistribution, nthMoments[i]);
+
+    return moments;
+}
+
+std::vector<val_type> Moment::extractFeature(const val_type *histogram) const
+{
+    // calculate mean histogram
+    val_type mean = meanHistogram(histogram);
+
+    // calculate moments
+    std::vector<val_type> moments(nthMoments.size());
+    for (size_t i = 0; i < nthMoments.size(); ++i)
+        moments[i] = extractMomentNth(mean, histogram, nthMoments[i]);
 
     return moments;
 }

@@ -2,14 +2,15 @@
 #define RECOGNIZER
 
 #include <vector>
+#include "definition.h"
 
 class Recognizer
 {
 public:
     virtual ~Recognizer() { }
 
-    virtual void train(const std::vector<std::vector<double> >& inputs, const std::vector<std::vector<double> >& outputs) = 0;
-    virtual std::vector<double> predict(const std::vector<double>& input) const = 0;
+    virtual void train(const std::vector<std::vector<val_type> >& inputs, const std::vector<std::vector<val_type> >& outputs) = 0;
+    virtual std::vector<val_type> predict(const std::vector<val_type>& input) const = 0;
 };
 
 #endif // RECOGNIZER

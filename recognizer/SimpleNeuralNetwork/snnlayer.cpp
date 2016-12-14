@@ -26,12 +26,12 @@ snnLayer::snnLayer(int prevLayerPerceptronCount, int perceptronCount)
       _delaWeigths(perceptronCount, prevLayerPerceptronCount + 1)
 {
     _inputs = new snn_type[prevLayerPerceptronCount];
-//    memset(_inputs, 0, prevLayerPerceptronCount * sizeof(snn_type));
-    std::fill(_inputs, _inputs + prevLayerPerceptronCount, (snn_type) 0.0);
+    memset(_inputs, 0, prevLayerPerceptronCount * sizeof(snn_type));
+//    std::fill(_inputs, _inputs + prevLayerPerceptronCount, (snn_type) 0.0);
 
     _outputs = new snn_type[perceptronCount];
-//    memset(_outputs, 0, perceptronCount * sizeof(snn_type));
-    std::fill(_outputs, _outputs + perceptronCount, (snn_type) 0.0);
+    memset(_outputs, 0, perceptronCount * sizeof(snn_type));
+//    std::fill(_outputs, _outputs + perceptronCount, (snn_type) 0.0);
 }
 
 snnLayer::~snnLayer()
@@ -42,8 +42,8 @@ snnLayer::~snnLayer()
 
 void snnLayer::_resetOutputs()
 {
-//    memset(_outputs, 0, _perceptronCount * sizeof(snn_type));
-    std::fill(_outputs, _outputs + _perceptronCount, (snn_type) 0.0);
+    memset(_outputs, 0, _perceptronCount * sizeof(snn_type));
+//    std::fill(_outputs, _outputs + _perceptronCount, (snn_type) 0.0);
 }
 
 void snnLayer::_resetDeltaWeights()
@@ -51,8 +51,8 @@ void snnLayer::_resetDeltaWeights()
     for (int i = 0; i < _perceptronCount; ++i) {
         snn_type* deltaWeights = _delaWeigths.row(i);
 
-//        memset(deltaWeights, 0, (_prevLayerPerceptronCount + 1) * sizeof(snn_type));
-        std::fill(deltaWeights, deltaWeights + _prevLayerPerceptronCount + 1, (snn_type) 0.0);
+        memset(deltaWeights, 0, (_prevLayerPerceptronCount + 1) * sizeof(snn_type));
+//        std::fill(deltaWeights, deltaWeights + _prevLayerPerceptronCount + 1, (snn_type) 0.0);
     }
 }
 
@@ -177,8 +177,8 @@ void snnLayer::generateRandomWeights(snn_type minimum, snn_type maximum)
 void snnLayer::propagateErrors(const snn_type *errors, snn_type *propagatedErrors) const
 {
     // reset propagated error
-//    memset(propagatedErrors, 0, _prevLayerPerceptronCount * sizeof(snn_type));
-    std::fill(propagatedErrors, propagatedErrors + _prevLayerPerceptronCount, (snn_type) 0.0);
+    memset(propagatedErrors, 0, _prevLayerPerceptronCount * sizeof(snn_type));
+//    std::fill(propagatedErrors, propagatedErrors + _prevLayerPerceptronCount, (snn_type) 0.0);
 
     for (int i = 0; i < _perceptronCount; ++i) {
         const snn_type* thisPerceptronWeights = _weights.row(i);

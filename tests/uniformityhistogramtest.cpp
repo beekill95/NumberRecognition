@@ -8,7 +8,7 @@ TEST(UniformityHistogramTest, TestWithSoNam) {
     cv::Mat image = cv::imread(SO_NAM_PATH, CV_LOAD_IMAGE_GRAYSCALE);
 
     UniformityHistogram uniformity;
-    std::vector<double> uni = uniformity.extractFeature(image);
+    std::vector<val_type> uni = uniformity.extractFeature(image);
 
     ASSERT_EQ(1, uni.size());
     EXPECT_NEAR(0.6264, uni[0], 0.00005);

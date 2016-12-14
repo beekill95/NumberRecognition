@@ -2,14 +2,18 @@
 #include <cassert>
 #include <iostream>
 
+#ifdef TIME_PROFILING
+#include <chrono>
+#endif
+
 const float Validator::DEFAULT_TRAINING_PERCENTAGE  = 0.8f;
 
 Validator::Validator()
 { }
 
 void Validator::validate(Recognizer *recognizer,
-                         const std::vector<std::vector<double> > &inputs,
-                         const std::vector<std::vector<double> > &outputs,
+                         const std::vector<std::vector<val_type> > &inputs,
+                         const std::vector<std::vector<val_type> > &outputs,
                          float trainingPercentage)
 {
     if (inputs.size() != outputs.size())
@@ -19,8 +23,8 @@ void Validator::validate(Recognizer *recognizer,
         trainingPercentage = DEFAULT_TRAINING_PERCENTAGE;
 
     // divide the training / testing
-    std::vector<std::vector<double> > trainingImages, testingImages;
-    std::vector<std::vector<double> > trainingLabels, testingLabels;
+    std::vector<std::vector<val_type> > trainingImages, testingImages;
+    std::vector<std::vector<val_type> > trainingLabels, testingLabels;
 
     int trainingDataCount = (int) (inputs.size() * trainingPercentage);
     int testingDataCount = inputs.size() - trainingDataCount;
@@ -39,20 +43,44 @@ void Validator::validate(Recognizer *recognizer,
         }
     }
 
+#ifdef TIME_PROFILING
+    std::chrono::system_clock::time_point start, finish;
+
+    using millis = std::chrono::minutes;
+    using minutes = std::chrono::minutes;
+    start = std::chrono::high_resolution_clock::now();
+#endif
+
     // training
     recognizer->train(trainingImages, trainingLabels);
+
+#ifdef TIME_PROFILING
+    finish = std::chrono::high_resolution_clock::now();
+    std::cout << "\nRecognizer Training took "
+                  << std::chrono::duration_cast<minutes>(finish - start).count()
+                  << " minutes";
+#endif
 
 //    std::cout << "Traing Finish!\nNhap mot so de tiep tuc: ";
 //    int x;
 //    std::cin >> x;
 
     // validate ket qua
-    std::vector<std::vector<double> > results;
+#ifdef TIME_PROFILING
+    start = std::chrono::high_resolution_clock::now();
+#endif
+    std::vector<std::vector<val_type> > results;
     results.reserve(testingDataCount);
     for (std::size_t i = 0; i < testingImages.size(); ++i) {
         std::cout << "\nPredicting #" << i << " ...";
         results.push_back(recognizer->predict(testingImages[i]));
     }
+#ifdef TIME_PROFILING
+    finish = std::chrono::high_resolution_clock::now();
+    std::cout << "\nRecognizer Predicting took "
+                  << std::chrono::duration_cast<millis>(finish - start).count()
+                  << " milliseconds";
+#endif
 
     // check result
     assert(results.size() == testingLabels.size());

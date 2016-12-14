@@ -2,12 +2,12 @@
 
 #include <cmath>
 
-std::vector<double> AverageEntropy::extractFeature(const cv::Mat &image) const
+std::vector<val_type> AverageEntropy::extractFeature(const cv::Mat &image) const
 {
-    float histogramDistribution[256];
+    val_type histogramDistribution[256];
     calculateHistogram(image, histogramDistribution);
 
-    double entropy = 0.0;
+    val_type entropy = 0.0;
     for (int i = 0; i < 256; ++i)
         if (histogramDistribution[i] != 0.0f)
             entropy += histogramDistribution[i] * log2(histogramDistribution[i]);
@@ -15,3 +15,12 @@ std::vector<double> AverageEntropy::extractFeature(const cv::Mat &image) const
     return {-entropy};
 }
 
+std::vector<val_type> AverageEntropy::extractFeature(const val_type *histogram) const
+{
+    val_type entropy = 0.0;
+    for (int i = 0; i < 256; ++i)
+        if (histogram[i] != 0.0f)
+            entropy += histogram[i] * log2(histogram[i]);
+
+    return {-entropy};
+}

@@ -10,6 +10,16 @@ include(recognizer/SimpleNeuralNetwork/SimpleNeuralNetwork.pri)
 QMAKE_CXXFLAGS += -std=c++11
 LIBS += -lopencv_core -lopencv_highgui -lgtest -lpthread
 
+# remove possible other optimization flags
+#QMAKE_CXXFLAGS_RELEASE -= -O
+#QMAKE_CXXFLAGS_RELEASE -= -O1
+#QMAKE_CXXFLAGS_RELEASE -= -O2
+
+# add the desired -O3 if not present
+QMAKE_CFLAGS_RELEASE *= -march=native
+#QMAKE_CXXFLAGS_RELEASE *= -march=native
+#QMAKE_CXXFLAGS_RELEASE *= -O3
+
 SOURCES += main.cpp \
     mnistloader/mnistloader.cpp \
     featureextraction/featuresetextractor.cpp \
@@ -72,6 +82,10 @@ HEADERS += \
     recognizer/neuralnetwork.h \
     definition.h
 
-debug {
-    DEFINES += VERBOSE
+CONFIG(debug, debug|release) {
+    DEFINES += VERBOSE GTEST
+}
+
+CONFIG(release, debug|release) {
+    DEFINES += VERBOSE TIME_PROFILING
 }

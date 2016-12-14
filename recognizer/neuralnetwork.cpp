@@ -34,7 +34,7 @@ NeuralNetwork::~NeuralNetwork()
     delete neuralNetwork;
 }
 
-void NeuralNetwork::train(const std::vector<std::vector<double> > &inputs, const std::vector<std::vector<double> > &outputs)
+void NeuralNetwork::train(const std::vector<std::vector<val_type> > &inputs, const std::vector<std::vector<val_type> > &outputs)
 {
     // check whether the inputs and outputs has the same size
     if (inputs.size() != outputs.size() || outputs[0].size() != 1)
@@ -44,11 +44,11 @@ void NeuralNetwork::train(const std::vector<std::vector<double> > &inputs, const
     snnMatrix inputData(inputs.size(), inputs[0].size());
     snnMatrix outputData(outputs.size(), OutputLayerSize);
 
-    double tmp[OutputLayerSize];
+    val_type tmp[OutputLayerSize];
     for (size_t i = 0; i < inputs.size(); ++i) {
         // need to check
         // whether this is zero initialized
-        memset(tmp, 0, OutputLayerSize * sizeof(double));
+        memset(tmp, 0, OutputLayerSize * sizeof(val_type));
         tmp[(int)(outputs[i][0])] = 1.0;
 
         inputData.setRow(i, inputs.at(i));
@@ -57,8 +57,8 @@ void NeuralNetwork::train(const std::vector<std::vector<double> > &inputs, const
 
     // kiem tra lai xem co so nao la nan hoac -nan
 //    for (size_t i = 0; i < inputs.size(); ++i) {
-//        const double* inputRow = inputData.row(i);
-//        const double* outputRow = outputData.row(i);
+//        const val_type* inputRow = inputData.row(i);
+//        const val_type* outputRow = outputData.row(i);
 
 //        for (int j = 0; j < inputData.getCols(); ++j)
 //            if (std::isnan(inputRow[j]))
@@ -73,13 +73,13 @@ void NeuralNetwork::train(const std::vector<std::vector<double> > &inputs, const
     neuralNetwork->train(&inputData, &outputData);
 }
 
-std::vector<double> NeuralNetwork::predict(const std::vector<double> &input) const
+std::vector<val_type> NeuralNetwork::predict(const std::vector<val_type> &input) const
 {
-    double outputResult[OutputLayerSize];
+    val_type outputResult[OutputLayerSize];
     neuralNetwork->predict(&input.at(0), outputResult);
 
-    double label = 0;
-    double max = outputResult[0];
+    val_type label = 0;
+    val_type max = outputResult[0];
     for (int i = 1; i < OutputLayerSize; ++i)
         if (outputResult[i] > max) {
             max = outputResult[i];

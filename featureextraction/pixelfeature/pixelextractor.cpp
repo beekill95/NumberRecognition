@@ -1,14 +1,15 @@
 #include "pixelextractor.h"
 
-PixelExtractor::PixelExtractor()
+PixelExtractor::PixelExtractor(int pixelExtract)
+    : pixelExtracted(pixelExtract)
 { }
 
 PixelExtractor::~PixelExtractor()
 { }
 
-std::vector<double> PixelExtractor::extractFeature(const cv::Mat &image) const
+std::vector<val_type> PixelExtractor::extractFeature(const cv::Mat &image) const
 {
-    std::vector<double> pixels(image.rows * image.cols);
+    std::vector<val_type> pixels(image.rows * image.cols);
 
     for (int r = 0; r < image.rows; ++r) {
         const unsigned char* pixelRow = image.ptr(r);
