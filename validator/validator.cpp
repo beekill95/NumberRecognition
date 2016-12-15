@@ -46,7 +46,7 @@ void Validator::validate(Recognizer *recognizer,
 #ifdef TIME_PROFILING
     std::chrono::system_clock::time_point start, finish;
 
-    using millis = std::chrono::minutes;
+    using millis = std::chrono::milliseconds;
     using minutes = std::chrono::minutes;
     start = std::chrono::high_resolution_clock::now();
 #endif

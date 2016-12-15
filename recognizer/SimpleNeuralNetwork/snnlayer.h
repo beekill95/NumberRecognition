@@ -29,6 +29,9 @@ private:
     // last column is the error for bias
     snnMatrix _delaWeigths;
 
+    // store previous delta weights
+    snnMatrix _prevDeltaWeights;
+
     // the input of this layer
     snn_type* _inputs;
 
@@ -81,7 +84,7 @@ public:
 
     // get and set current layer learning momentum
     snn_type getLearningMomentum() const {return _learningMomentum;}
-    void setLearningMomentum(snn_type learningMomentum) {_learningMomentum = 0.0 /* error in implementation */;}
+    void setLearningMomentum(snn_type learningMomentum) {_learningMomentum = learningMomentum;}
 
     // get current layer's perceptron count
     int getPerceptronCount() const {return _perceptronCount;}

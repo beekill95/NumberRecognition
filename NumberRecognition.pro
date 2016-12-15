@@ -8,7 +8,7 @@ INCLUDEPATH += . recognizer/SimpleNeuralNetwork
 include(recognizer/SimpleNeuralNetwork/SimpleNeuralNetwork.pri)
 
 QMAKE_CXXFLAGS += -std=c++11
-LIBS += -lopencv_core -lopencv_highgui -lgtest -lpthread
+LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lgtest -lpthread
 
 # remove possible other optimization flags
 #QMAKE_CXXFLAGS_RELEASE -= -O
@@ -51,7 +51,8 @@ SOURCES += main.cpp \
     tests/momenttest.cpp \
     tests/uniformityhistogramtest.cpp \
     tests/entropyhistogramtest.cpp \
-    recognizer/neuralnetwork.cpp
+    recognizer/neuralnetwork.cpp \
+    preprocessing/preprocessingimage.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -80,7 +81,8 @@ HEADERS += \
     featureextraction/statisticalfeatures/histogram/histogramfeature.h \
     featureextraction/statisticalfeatures/statisticalfeature.h \
     recognizer/neuralnetwork.h \
-    definition.h
+    definition.h \
+    preprocessing/preprocessingimage.h
 
 CONFIG(debug, debug|release) {
     DEFINES += VERBOSE GTEST

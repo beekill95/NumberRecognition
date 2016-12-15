@@ -1,5 +1,7 @@
 #include "mnistloader/mnistloader.h"
 
+#include "preprocessing/preprocessingimage.h"
+
 #include "recognizer/recognizer.h"
 #include "recognizer/knearestneighbors.h"
 #include "recognizer/neuralnetwork.h"
@@ -53,42 +55,51 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    // preprocess image
+    PreprocessingImage preprocessingImage;
+
+    std::vector<cv::Mat> preprocessImages = preprocessingImage.preprocess(dataImages);
+//    cv::imshow("so nam", preprocessImages[0]);
+//    cv::waitKey(0);
+
     // pixel extractor
     // PixelExtractor pixelExtractor;
 
     // feature set extractor
     FeatureSetExtractor featureSetExtractor;
-//    featureSetExtractor.addFeature(new PixelExtractor(784));
+    featureSetExtractor.addFeature(new PixelExtractor(784));
 
     // add all statistical features
-    HistogramBaseFeatureSet* histogramFeatureSet = new HistogramBaseFeatureSet();
-    histogramFeatureSet->addFeature(new AverageEntropy());
-    histogramFeatureSet->addFeature(new MeanHistogram());
-    histogramFeatureSet->addFeature(new Moment(5));
-    histogramFeatureSet->addFeature(new RelativeSmoothness());
-    histogramFeatureSet->addFeature(new UniformityHistogram());
+//    HistogramBaseFeatureSet* histogramFeatureSet = new HistogramBaseFeatureSet();
+//    histogramFeatureSet->addFeature(new AverageEntropy());
+//    histogramFeatureSet->addFeature(new MeanHistogram());
+//    histogramFeatureSet->addFeature(new Moment(5));
+//    histogramFeatureSet->addFeature(new RelativeSmoothness());
+//    histogramFeatureSet->addFeature(new UniformityHistogram());
 
-    CooccurrenceMatrixBasedFeatureSet* cooccurMatFeatureSet = new CooccurrenceMatrixBasedFeatureSet(relativeTo);
-    cooccurMatFeatureSet->addFeature(new Contrast(relativeTo));
-    cooccurMatFeatureSet->addFeature(new Correlation(relativeTo));
-    cooccurMatFeatureSet->addFeature(new Entropy(relativeTo));
-    cooccurMatFeatureSet->addFeature(new Homogeneity(relativeTo));
-    cooccurMatFeatureSet->addFeature(new MaximumProbability(relativeTo));
-    cooccurMatFeatureSet->addFeature(new UniformityCooccurence(relativeTo));
+//    featureSetExtractor.addFeature(histogramFeatureSet);
 
-    featureSetExtractor.addFeature(histogramFeatureSet);
-    featureSetExtractor.addFeature(cooccurMatFeatureSet);
+//    CooccurrenceMatrixBasedFeatureSet* cooccurMatFeatureSet = new CooccurrenceMatrixBasedFeatureSet(relativeTo);
+//    cooccurMatFeatureSet->addFeature(new Contrast(relativeTo));
+//    cooccurMatFeatureSet->addFeature(new Correlation(relativeTo));
+//    cooccurMatFeatureSet->addFeature(new Entropy(relativeTo));
+//    cooccurMatFeatureSet->addFeature(new Homogeneity(relativeTo));
+//    cooccurMatFeatureSet->addFeature(new MaximumProbability(relativeTo));
+//    cooccurMatFeatureSet->addFeature(new UniformityCooccurence(relativeTo));
+
+//    featureSetExtractor.addFeature(cooccurMatFeatureSet);
 
     // trich xuat ra dac trung
     std::vector<std::vector<val_type> > inputs, outputs;
     inputs.reserve(IMAGE_COUNT);
     outputs.reserve(IMAGE_COUNT);
     for (int i = 0; i < IMAGE_COUNT; ++i) {
-        inputs.push_back(featureSetExtractor.extractFeature(dataImages[i]));
+        inputs.push_back(featureSetExtractor.extractFeature(preprocessImages[i]));
         outputs.push_back({dataLabels[i]});
     }
 
     // clear images to save some space
+    preprocessImages.clear();
     dataImages.clear();
     dataLabels.clear();
 
@@ -97,11 +108,11 @@ int main(int argc, char** argv)
     KNearestNeighbors kNearestNeighbors(neighbourCount);
 
     // neural network
-    std::vector<int> hiddenLayers = {50, 50};
+    std::vector<int> hiddenLayers = {50};
     NeuralNetwork neuralNetwork(featureSetExtractor.getFeatureCount(), hiddenLayers);
-    neuralNetwork.setMaxEpochs(50);
-    neuralNetwork.setLearningMomentum(0.0);
-    neuralNetwork.setLearningRate(0.0001);
+    neuralNetwork.setMaxEpochs(300);
+    neuralNetwork.setLearningMomentum(0.7);
+    neuralNetwork.setLearningRate(0.0002);
     neuralNetwork.setDesiredError(0.15);
     neuralNetwork.setBatchSize(480);
     neuralNetwork.setTrainingType(BatchTraining);

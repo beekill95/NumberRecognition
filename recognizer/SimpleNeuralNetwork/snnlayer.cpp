@@ -23,7 +23,8 @@ snnLayer::snnLayer(int prevLayerPerceptronCount, int perceptronCount)
       _weights(perceptronCount, prevLayerPerceptronCount + 1),
 
       // each weights has an error
-      _delaWeigths(perceptronCount, prevLayerPerceptronCount + 1)
+      _delaWeigths(perceptronCount, prevLayerPerceptronCount + 1),
+      _prevDeltaWeights(perceptronCount, prevLayerPerceptronCount + 1)
 {
     _inputs = new snn_type[prevLayerPerceptronCount];
     memset(_inputs, 0, prevLayerPerceptronCount * sizeof(snn_type));
@@ -120,45 +121,32 @@ void snnLayer::updateDeltaWeights(const snn_type *errors)
             std::cout << "x : " << x;
         }
 
+        snn_type* prevPerceptronDeltaWeights = _prevDeltaWeights.row(perceptron);
         snn_type* perceptronDeltaWeights = _delaWeigths.row(perceptron);
 
         if (_activationFunction == Sigmoid) {
             // not including bias
             for (int w = 0; w < _prevLayerPerceptronCount; ++w) {
-                snn_type previousDeltaWeight = perceptronDeltaWeights[w];
+                snn_type previousDeltaWeight = prevPerceptronDeltaWeights[w];
+                snn_type deltaWeight = perceptronError * sigmoid_deri_func(perceptronOutput) * _inputs[w];
 
-//                if (std::isnan(previousDeltaWeight) || std::isinf(previousDeltaWeight)) {
-//                    int x = 0;
-//                    x += 1;
-//                    std::cout << "x : " << x;
-//                }
+                // current delta weights
+                perceptronDeltaWeights[w] += previousDeltaWeight * _learningMomentum + deltaWeight;
 
-                perceptronDeltaWeights[w] += previousDeltaWeight * _learningMomentum + perceptronError * sigmoid_deri_func(perceptronOutput) * _inputs[w];
-
-//                if (std::isnan(perceptronDeltaWeights[w]) || std::isinf(perceptronDeltaWeights[w])) {
-//                    int x = 0;
-//                    x += 1;
-//                    std::cout << "x : " << x;
-//                }
+                // store previous delta weights
+                prevPerceptronDeltaWeights[w] = deltaWeight;
             }
 
             // calculating deltaweights for bias
             {
-                snn_type previousDeltaWeight = perceptronDeltaWeights[_prevLayerPerceptronCount];
+                snn_type previousDeltaWeight = prevPerceptronDeltaWeights[_prevLayerPerceptronCount];
+                snn_type deltaWeight = perceptronError * sigmoid_deri_func(perceptronOutput);
 
-//                if (std::isnan(previousDeltaWeight) || std::isinf(previousDeltaWeight)) {
-//                    int x = 0;
-//                    x += 1;
-//                    std::cout << "x : " << x;
-//                }
+                // current delta weight
+                perceptronDeltaWeights[_prevLayerPerceptronCount] += previousDeltaWeight * _learningMomentum + deltaWeight;
 
-                perceptronDeltaWeights[_prevLayerPerceptronCount] += previousDeltaWeight * _learningMomentum + perceptronError * sigmoid_deri_func(perceptronOutput);
-
-//                if (std::isnan(perceptronDeltaWeights[_prevLayerPerceptronCount]) || std::isinf(perceptronDeltaWeights[_prevLayerPerceptronCount])) {
-//                    int x = 0;
-//                    x += 1;
-//                    std::cout << "x : " << x;
-//                }
+                // store previous delta weight
+                prevPerceptronDeltaWeights[_prevLayerPerceptronCount] = deltaWeight;
             }
         }
     }
