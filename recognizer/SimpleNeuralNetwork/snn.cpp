@@ -114,6 +114,10 @@ void snn::train(const snnMatrix *inputs, const snnMatrix *outputs)
                 } else
                    ++inputFeeded;
                 break;
+            case Rprop:
+
+            default:
+                break;
             }
         }
 

@@ -171,8 +171,7 @@ void circleWithNoiseClassificationTest(int size)
 {
     // the rule is:
     // if ||x1, x2|| < 0.5 => class A
-    // otherwise => class B
-
+    // otherwise => class
     snnMatrix inputs(size, 2);
     snnMatrix outputs(size, 2);
 

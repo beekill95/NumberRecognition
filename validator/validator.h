@@ -17,7 +17,10 @@ public:
     void validate(Recognizer* recognizer,
                   const std::vector<std::vector<val_type> >& inputs,
                   const std::vector<std::vector<val_type> >& outputs,
-                  float trainingPercentage = 0.8f);
+                  float trainingPercentage = 0.8f) const;
+//    void run(Recognizer* Recognizer,
+//             const std::vector<std::vector<val_type> >& inputs,
+//             const std::vector<std::vector<val_type> >& outputs) const;
 };
 
 #endif // VALIDATOR_H

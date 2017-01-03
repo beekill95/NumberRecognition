@@ -14,7 +14,7 @@ Validator::Validator()
 void Validator::validate(Recognizer *recognizer,
                          const std::vector<std::vector<val_type> > &inputs,
                          const std::vector<std::vector<val_type> > &outputs,
-                         float trainingPercentage)
+                         float trainingPercentage) const
 {
     if (inputs.size() != outputs.size())
         return;
@@ -96,3 +96,7 @@ void Validator::validate(Recognizer *recognizer,
               << "\nPhan loai dung: " << rightCount * 100.0f / testingLabels.size() << " %" << std::endl;
 }
 
+//void Validator::run(Recognizer *Recognizer, const std::vector<std::vector<val_type> > &inputs, const std::vector<std::vector<val_type> > &outputs)
+//{
+
+//}

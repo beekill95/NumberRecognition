@@ -73,7 +73,7 @@ void NeuralNetwork::train(const std::vector<std::vector<val_type> > &inputs, con
     neuralNetwork->train(&inputData, &outputData);
 }
 
-std::vector<val_type> NeuralNetwork::predict(const std::vector<val_type> &input) const
+std::vector<val_type> NeuralNetwork::predict(const std::vector<val_type> &input, bool verbose) const
 {
     val_type outputResult[OutputLayerSize];
     neuralNetwork->predict(&input.at(0), outputResult);
@@ -85,6 +85,11 @@ std::vector<val_type> NeuralNetwork::predict(const std::vector<val_type> &input)
             max = outputResult[i];
             label = i;
         }
+
+    if (verbose) {
+        for (int i = 0; i < OutputLayerSize; ++i)
+            std::cout << "\nProbability of class [" << i << "] is: " << outputResult[i];
+    }
 
     return {label};
 }

@@ -137,7 +137,7 @@ void KNearestNeighbors::train(const std::vector<std::vector<val_type> > &inputs,
     this->outputs = outputs;
 }
 
-std::vector<val_type> KNearestNeighbors::predict(const std::vector<val_type> &input) const
+std::vector<val_type> KNearestNeighbors::predict(const std::vector<val_type> &input, bool verbose) const
 {
     MaxHeap maxHeap(k_neighbors);
 

@@ -11,14 +11,14 @@ QMAKE_CXXFLAGS += -std=c++11
 LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lgtest -lpthread
 
 # remove possible other optimization flags
-#QMAKE_CXXFLAGS_RELEASE -= -O
-#QMAKE_CXXFLAGS_RELEASE -= -O1
-#QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE -= -O
+QMAKE_CXXFLAGS_RELEASE -= -O1
+QMAKE_CXXFLAGS_RELEASE -= -O2
 
 # add the desired -O3 if not present
 QMAKE_CFLAGS_RELEASE *= -march=native
 #QMAKE_CXXFLAGS_RELEASE *= -march=native
-#QMAKE_CXXFLAGS_RELEASE *= -O3
+QMAKE_CXXFLAGS_RELEASE *= -O3
 
 SOURCES += main.cpp \
     mnistloader/mnistloader.cpp \
@@ -52,7 +52,8 @@ SOURCES += main.cpp \
     tests/uniformityhistogramtest.cpp \
     tests/entropyhistogramtest.cpp \
     recognizer/neuralnetwork.cpp \
-    preprocessing/preprocessingimage.cpp
+    preprocessing/preprocessingimage.cpp \
+    featureextraction/boundaryfeature/boundaryfeature.cpp
 
 HEADERS += \
     mnistloader/mnistloader.h \
@@ -82,10 +83,11 @@ HEADERS += \
     featureextraction/statisticalfeatures/statisticalfeature.h \
     recognizer/neuralnetwork.h \
     definition.h \
-    preprocessing/preprocessingimage.h
+    preprocessing/preprocessingimage.h \
+    featureextraction/boundaryfeature/boundaryfeature.h
 
 CONFIG(debug, debug|release) {
-    DEFINES += VERBOSE GTEST
+    DEFINES += VERBOSE TIME_PROFILING
 }
 
 CONFIG(release, debug|release) {

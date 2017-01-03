@@ -20,7 +20,8 @@ enum snn_training_type
 {
     BatchTraining = 0,
     StochasticTraining,
-    MiniBatchTraining
+    MiniBatchTraining,
+    Rprop
 };
 
 class snnMatrix

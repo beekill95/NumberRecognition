@@ -9,6 +9,7 @@
 #include "featureextraction/pixelfeature/pixelfeature.h"
 #include "featureextraction/statisticalfeatures/statisticalfeature.h"
 #include "featureextraction/featuresetextractor.h"
+#include "featureextraction/boundaryfeature/boundaryfeature.h"
 
 #include "validator/validator.h"
 
@@ -24,15 +25,35 @@
 #endif
 
 #define IMAGE_TRAINING_DATA "data/train-images.idx3-ubyte"
+#define IMAGE_TEST_DATA "data/t10k-images.idx3-ubyte"
 #define LABEL_TRAINING_DATA "data/train-labels.idx1-ubyte"
 
 #define IMAGE_COUNT 60000
+#define TEST_IMAGE_COUNT 10000
+#define SMALL_IMAGE_COUNT 2000
 
 using namespace std;
 using namespace cv;
 
 cv::Point relativeTo(const cv::Point& first) {
     return cv::Point(first.x, first.y + 1);
+}
+
+bool isEnough(bool isBinFull[])
+{
+    bool isEnough = isBinFull[0];
+    for (int i = 1; i < 10; ++i)
+        isEnough = isEnough && isBinFull[i];
+    return isEnough;
+}
+
+void printVector(const std::vector<val_type>& vec)
+{
+    std::cout << '\n';
+    for (size_t i = 0; i < vec.size(); ++i) {
+        std::cout << vec[i] << ' ';
+    }
+    std::cout << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -55,19 +76,65 @@ int main(int argc, char** argv)
         return 0;
     }
 
+    // only using a small number of images of each number
+    // for faster training
+    std::vector<cv::Mat> smallDataImages;
+    smallDataImages.reserve(SMALL_IMAGE_COUNT * 10);
+    std::vector<float> smallDataLabels;
+    smallDataLabels.reserve(SMALL_IMAGE_COUNT * 10);
+    int numberBinCount[10] = {0};
+    bool isBinFull[10] = {false};
+    int _i = 0;
+    while (!isEnough(isBinFull)) {
+        int label = (int) dataLabels[_i];
+
+        if (!isBinFull[label]) {
+            // tang bien dem
+            ++numberBinCount[label];
+
+            // bo vao du lieu
+            smallDataImages.push_back(dataImages[_i]);
+            smallDataLabels.push_back(dataLabels[_i]);
+
+            // kiem tra xem da day
+            if (numberBinCount[label] == SMALL_IMAGE_COUNT)
+                isBinFull[label] = true;
+        }
+
+        ++_i;
+    }
+
     // preprocess image
     PreprocessingImage preprocessingImage;
 
     std::vector<cv::Mat> preprocessImages = preprocessingImage.preprocess(dataImages);
+//    std::vector<cv::Mat> preprocessImages = preprocessingImage.preprocess(smallDataImages);
 //    cv::imshow("so nam", preprocessImages[0]);
 //    cv::waitKey(0);
 
     // pixel extractor
     // PixelExtractor pixelExtractor;
 
+    // boundary extractor
+//    BoundaryFeature boundaryFeature(cv::Point(4, 4), 40);
+
+//    printVector(boundaryFeature.extractFeature(preprocessImages[0]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[11]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[35]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[47]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[65]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[100]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[132]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[138]));
+//    printVector(boundaryFeature.extractFeature(preprocessImages[145]));
+//    int x;
+//    std::cin >> x;
+
+
     // feature set extractor
     FeatureSetExtractor featureSetExtractor;
-    featureSetExtractor.addFeature(new PixelExtractor(784));
+//    featureSetExtractor.addFeature(new PixelExtractor(784));
+    featureSetExtractor.addFeature(new BoundaryFeature(cv::Point(4, 4), 40));
 
     // add all statistical features
 //    HistogramBaseFeatureSet* histogramFeatureSet = new HistogramBaseFeatureSet();
@@ -99,9 +166,9 @@ int main(int argc, char** argv)
     }
 
     // clear images to save some space
-    preprocessImages.clear();
     dataImages.clear();
     dataLabels.clear();
+    preprocessImages.clear();
 
     // k - nearest neighbors
     int neighbourCount = 21;
@@ -111,15 +178,48 @@ int main(int argc, char** argv)
     std::vector<int> hiddenLayers = {50};
     NeuralNetwork neuralNetwork(featureSetExtractor.getFeatureCount(), hiddenLayers);
     neuralNetwork.setMaxEpochs(300);
-    neuralNetwork.setLearningMomentum(0.7);
-    neuralNetwork.setLearningRate(0.0002);
+    neuralNetwork.setLearningMomentum(0.9);
+    neuralNetwork.setLearningRate(0.001);
     neuralNetwork.setDesiredError(0.15);
     neuralNetwork.setBatchSize(480);
     neuralNetwork.setTrainingType(BatchTraining);
 
     // training and validating
     Validator validator;
-    validator.validate(&neuralNetwork, inputs, outputs);
+    validator.validate(&kNearestNeighbors, inputs, outputs);
+
+    // user interaction
+    // load data
+//    std::vector<cv::Mat> testImages;
+//    testImages.reserve(TEST_IMAGE_COUNT);
+//    read_Mnist(IMAGE_TEST_DATA, testImages);
+
+//    std::string userInput;
+//    bool stop = false;
+//    while (!stop) {
+//        std::cout << "Input index of image to test: (not a number to stop)\t";
+//        std::cin >> userInput;
+
+//        int index = -1;
+//        try {
+//            index = std::stoi(userInput);
+//        } catch (std::invalid_argument) {
+//            stop = true;
+//        }
+
+//        if (!stop) {
+//            if (index < 0 || index >= testImages.size())
+//                std::cout << "Index out of bound: " << testImages.size() << std::endl;
+//            else {
+//                std::vector<val_type> features = featureSetExtractor.extractFeature(testImages[index]);
+//                std::vector<val_type> result = neuralNetwork.predict(features, true);
+
+//                std::cout << "\nPredicted image is: " << (int) result[0] << std::endl;
+//                cv::imshow("Number", testImages[index]);
+//                cv::waitKey(0);
+//            }
+//        }
+//    }
 #endif
 
     return 0;
