@@ -25,8 +25,9 @@
 #endif
 
 #define IMAGE_TRAINING_DATA "data/train-images.idx3-ubyte"
-#define IMAGE_TEST_DATA "data/t10k-images.idx3-ubyte"
+#define IMAGE_TESTING_DATA "data/t10k-images.idx3-ubyte"
 #define LABEL_TRAINING_DATA "data/train-labels.idx1-ubyte"
+#define LABEL_TETSTING_DATA "data/t10k-labels.idx1-ubyte"
 
 #define IMAGE_COUNT 60000
 #define TEST_IMAGE_COUNT 10000
@@ -175,51 +176,49 @@ int main(int argc, char** argv)
     KNearestNeighbors kNearestNeighbors(neighbourCount);
 
     // neural network
-    std::vector<int> hiddenLayers = {50};
+    std::vector<int> hiddenLayers = {100};
     NeuralNetwork neuralNetwork(featureSetExtractor.getFeatureCount(), hiddenLayers);
     neuralNetwork.setMaxEpochs(300);
     neuralNetwork.setLearningMomentum(0.9);
     neuralNetwork.setLearningRate(0.001);
-    neuralNetwork.setDesiredError(0.15);
-    neuralNetwork.setBatchSize(480);
+    neuralNetwork.setDesiredError(0.17);
     neuralNetwork.setTrainingType(BatchTraining);
+
+    NeuralNetwork* nn = NeuralNetwork::deserialize();
+
+    Recognizer* recognizer = &neuralNetwork;
 
     // training and validating
     Validator validator;
-    validator.validate(&kNearestNeighbors, inputs, outputs);
+    validator.validate(recognizer, inputs, outputs);
+
+    // save neural network to file
+//    neuralNetwork.serialize();
 
     // user interaction
     // load data
-//    std::vector<cv::Mat> testImages;
-//    testImages.reserve(TEST_IMAGE_COUNT);
-//    read_Mnist(IMAGE_TEST_DATA, testImages);
+    std::vector<cv::Mat> testingImages;
+    const int TESTING_IMAGE_COUNT = 10000;
+    testingImages.reserve(TESTING_IMAGE_COUNT);
+    read_Mnist(IMAGE_TESTING_DATA, testingImages);
 
-//    std::string userInput;
-//    bool stop = false;
-//    while (!stop) {
-//        std::cout << "Input index of image to test: (not a number to stop)\t";
-//        std::cin >> userInput;
+    std::vector<float> testingLabels(TESTING_IMAGE_COUNT);
+    read_Mnist_Label(LABEL_TETSTING_DATA, testingLabels);
 
-//        int index = -1;
-//        try {
-//            index = std::stoi(userInput);
-//        } catch (std::invalid_argument) {
-//            stop = true;
-//        }
+    std::vector<cv::Mat> preprocessedTestingImages = preprocessingImage.preprocess(testingImages);
+    std::vector<std::vector<val_type> > inputTesting, outputTesting;
+    inputTesting.reserve(TESTING_IMAGE_COUNT);
+    outputTesting.reserve(TESTING_IMAGE_COUNT);
+    for (int i = 0; i < TESTING_IMAGE_COUNT; ++i) {
+        inputTesting.push_back(featureSetExtractor.extractFeature(preprocessedTestingImages[i]));
+        outputTesting.push_back({testingLabels[i]});
+    }
 
-//        if (!stop) {
-//            if (index < 0 || index >= testImages.size())
-//                std::cout << "Index out of bound: " << testImages.size() << std::endl;
-//            else {
-//                std::vector<val_type> features = featureSetExtractor.extractFeature(testImages[index]);
-//                std::vector<val_type> result = neuralNetwork.predict(features, true);
+    validator.run(recognizer, testingImages, inputTesting, outputTesting);
 
-//                std::cout << "\nPredicted image is: " << (int) result[0] << std::endl;
-//                cv::imshow("Number", testImages[index]);
-//                cv::waitKey(0);
-//            }
-//        }
-//    }
+    // delete
+    nn->serialize();
+    delete nn;
 #endif
 
     return 0;

@@ -4,7 +4,8 @@
 #include "recognizer/recognizer.h"
 #include "definition.h"
 
-#include "vector"
+#include <vector>
+#include <opencv2/core/core.hpp>
 
 class Validator
 {
@@ -18,9 +19,10 @@ public:
                   const std::vector<std::vector<val_type> >& inputs,
                   const std::vector<std::vector<val_type> >& outputs,
                   float trainingPercentage = 0.8f) const;
-//    void run(Recognizer* Recognizer,
-//             const std::vector<std::vector<val_type> >& inputs,
-//             const std::vector<std::vector<val_type> >& outputs) const;
+    void run(Recognizer* Recognizer,
+             const std::vector<cv::Mat>& images,
+             const std::vector<std::vector<val_type> >& inputs,
+             const std::vector<std::vector<val_type> >& outputs) const;
 };
 
 #endif // VALIDATOR_H
