@@ -2,6 +2,9 @@
 #define SNN_H
 
 #include "snnlayer.h"
+#include <cereal/access.hpp>
+#include <cereal/types/memory.hpp>
+#include <memory>
 
 class snn
 {
@@ -70,6 +73,16 @@ public:
     // numHiddenLayers: number of hidden layers exist in neural network
     // nodesPerLayer: an array stores number of nodes per hidden layer
     snn(int numInputs, int numOutputs, int numHiddenLayers, const int* nodesPerLayer);
+    snn(
+            int numInputs,
+            int numLayers,
+            snn_cost_function costFunction,
+            snn_training_type trainingType,
+            int maxEpochs,
+            int batchSize,
+            snn_type desiredMeanError,
+            snnLayer** layers);
+    snn(const snn& other);
     ~snn();
 
     // get set which cost function is used in the network
@@ -115,6 +128,46 @@ public:
     // outputs: set of return output vectors
     // outputs must be initialized before being passed to the function
     void predict(const snn_type* inputs, snn_type* outputs) const;
+
+    // serialize and deserialze
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(_numInputs);
+        archive(_numLayers);
+        archive(_costFunction);
+        archive(_trainingType);
+        archive(_maxEpochs);
+        archive(_batchSize);
+        archive(_desiredMeanError);
+        for (int i = 0; i < _numLayers; ++i) {
+            std::unique_ptr<snnLayer> layer{_layers[i]};
+            archive(layer);
+            layer.release();
+        }
+    }
+
+    template<class Archive>
+    static void load_and_construct(Archive& archive, cereal::construct<snn>& construct)
+    {
+        int numInputs, numLayers;
+        snn_cost_function costFunction;
+        snn_training_type trainingType;
+        int maxEpochs, batchSize;
+        snn_type desiredMeanError;
+        snnLayer** layers;
+
+        archive(numInputs, numLayers, costFunction, trainingType, maxEpochs, batchSize, desiredMeanError);
+        layers = new snnLayer*[numLayers];
+        for (int i = 0; i < numLayers; ++i) {
+            std::unique_ptr<snnLayer> layer{nullptr};
+            archive(layer);
+
+            layers[i] = new snnLayer(*layer);
+        }
+
+        construct(numInputs, numLayers, costFunction, trainingType, maxEpochs, batchSize, desiredMeanError, layers);
+    }
 };
 
 #endif // SNN_H

@@ -45,6 +45,40 @@ snn::snn(int numInputs, int numOutputs, int numHiddenLayers, const int* nodesPer
     }
 }
 
+snn::snn(
+        int numInputs,
+        int numLayers,
+        snn_cost_function costFunction,
+        snn_training_type trainingType,
+        int maxEpochs,
+        int batchSize,
+        snn_type desiredMeanError,
+        snnLayer **layers)
+    : _numInputs(numInputs),
+      _numLayers(numLayers),
+      _costFunction(costFunction),
+      _trainingType(trainingType),
+      _maxEpochs(maxEpochs),
+      _batchSize(batchSize),
+      _desiredMeanError(desiredMeanError),
+      _layers(layers)
+{ }
+
+snn::snn(const snn &other)
+    : _numInputs(other._numInputs),
+      _numLayers(other._numLayers),
+      _costFunction(other._costFunction),
+      _trainingType(other._trainingType),
+      _maxEpochs(other._maxEpochs),
+      _batchSize(other._batchSize),
+      _desiredMeanError(other._desiredMeanError)
+{
+    _layers = new snnLayer*[_numLayers];
+
+    for (int i = 0; i < _numLayers; ++i)
+        _layers[i] = new snnLayer(*other._layers[i]);
+}
+
 snn::~snn()
 {
     for (int i = 0; i < _numLayers; ++i)

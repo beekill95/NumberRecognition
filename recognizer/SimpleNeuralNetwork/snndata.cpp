@@ -7,12 +7,22 @@
 #include <iostream>
 #endif
 
+snnMatrix::snnMatrix(int rows, int cols, snn_type *data)
+    : _rows(rows), _cols(cols), _data(data)
+{ }
+
 snnMatrix::snnMatrix(int rows, int cols)
     : _rows(rows), _cols(cols)
 {
     _data = new snn_type[rows * cols];
     memset(_data, 0, rows * cols * sizeof(snn_type));
-//    std::fill(_data, _data + rows * cols, (snn_type) 0.0);
+}
+
+snnMatrix::snnMatrix(const snnMatrix &other)
+    : _rows(other._rows), _cols(other._cols)
+{
+    _data = new snn_type[_rows * _cols];
+    memcpy(_data, other._data, sizeof(snn_type) * _rows * _cols);
 }
 
 snnMatrix::~snnMatrix()

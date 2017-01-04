@@ -2,6 +2,9 @@
 #define SNNLAYER_H
 
 #include "snndata.h"
+#include <cereal/access.hpp>
+#include <cereal/types/memory.hpp>
+#include <memory>
 
 class snnLayer
 {
@@ -48,6 +51,18 @@ public:
     // perceptronCount:          the number of perceptron in this layer
     //                           but doesn't count the bias
     snnLayer(int prevLayerPerceptronCount, int perceptronCount);
+    snnLayer(
+            int prevLayerPerceptronCount,
+            int perceptronCount,
+            snn_activation_function activationFunction,
+            snn_type learningRate,
+            snn_type learningMomentum,
+            const snnMatrix& weights,
+            const snnMatrix& deltaWeights,
+            const snnMatrix& prevDeltaWeights,
+            snn_type* inputs,
+            snn_type* output);
+    snnLayer(const snnLayer& other);
     ~snnLayer();
 
     // calculate the output of current layer, given the inputs
@@ -91,6 +106,52 @@ public:
 
     // get previous layer's perceptron count
     int getPrevLayerPerceptronCount() const {return _prevLayerPerceptronCount;}
+
+    // serialize and deserialize
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(_prevLayerPerceptronCount);
+        archive(_perceptronCount);
+        archive(_activationFunction);
+        archive(_learningRate);
+        archive(_learningMomentum);
+        std::unique_ptr<snnMatrix> weights{&_weights}, deltaWeights{&_delaWeigths}, prevDeltaWeights{&_prevDeltaWeights};
+        archive(weights);
+        archive(deltaWeights);
+        archive(prevDeltaWeights);
+        weights.release(); prevDeltaWeights.release(); deltaWeights.release();
+        for (int i = 0; i < _prevLayerPerceptronCount; ++i)
+            archive(_inputs[i]);
+        for (int i = 0; i < _perceptronCount; ++i)
+            archive(_outputs[i]);
+    }
+
+    template<class Archive>
+    static void load_and_construct(Archive& archive, cereal::construct<snnLayer>& construct)
+    {
+        int prevLayerPerceptronCount, perceptronCount;
+        snn_activation_function activationFunction;
+        snn_type learningRate, learningMomentum;
+
+        std::unique_ptr<snnMatrix> weights{nullptr}, deltaWeights{nullptr}, prevDeltaWeights{nullptr};
+        snn_type *inputs, *outputs;
+
+        archive(prevLayerPerceptronCount, perceptronCount, activationFunction, learningRate, learningMomentum);
+        archive(weights, deltaWeights, prevDeltaWeights);
+
+        inputs = new snn_type[prevLayerPerceptronCount];
+        outputs = new snn_type[perceptronCount];
+
+        for (int i = 0; i < prevLayerPerceptronCount; ++i)
+            archive(inputs[i]);
+        for (int i = 0; i < perceptronCount; ++i)
+            archive(outputs[i]);
+
+        construct(prevLayerPerceptronCount, perceptronCount,
+                  activationFunction, learningRate, learningMomentum,
+                  *weights, *deltaWeights, *prevDeltaWeights, inputs, outputs);
+    }
 };
 
 #endif // SNNLAYER_H

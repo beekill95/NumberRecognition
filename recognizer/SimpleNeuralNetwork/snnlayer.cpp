@@ -35,6 +35,46 @@ snnLayer::snnLayer(int prevLayerPerceptronCount, int perceptronCount)
 //    std::fill(_outputs, _outputs + perceptronCount, (snn_type) 0.0);
 }
 
+snnLayer::snnLayer(
+        int prevLayerPerceptronCount,
+        int perceptronCount,
+        snn_activation_function activationFunction,
+        snn_type learningRate,
+        snn_type learningMomentum,
+        const snnMatrix &weights,
+        const snnMatrix &deltaWeights,
+        const snnMatrix &prevDeltaWeights,
+        snn_type *inputs,
+        snn_type *output)
+    : _prevLayerPerceptronCount(prevLayerPerceptronCount),
+      _perceptronCount(perceptronCount),
+      _activationFunction(activationFunction),
+      _learningRate(learningRate),
+      _learningMomentum(learningMomentum),
+      _weights(weights),
+      _delaWeigths(deltaWeights),
+      _prevDeltaWeights(prevDeltaWeights),
+      _inputs(inputs),
+      _outputs(output)
+{ }
+
+snnLayer::snnLayer(const snnLayer &other)
+    : _prevLayerPerceptronCount(other._prevLayerPerceptronCount),
+      _perceptronCount(other._perceptronCount),
+      _activationFunction(other._activationFunction),
+      _learningRate(other._learningRate),
+      _learningMomentum(other._learningMomentum),
+      _weights(other._weights),
+      _delaWeigths(other._delaWeigths),
+      _prevDeltaWeights(other._prevDeltaWeights)
+{
+    _inputs = new snn_type[_prevLayerPerceptronCount];
+    memcpy(_inputs, other._inputs, sizeof(snn_type) * _prevLayerPerceptronCount);
+
+    _outputs = new snn_type[_perceptronCount];
+    memcpy(_outputs, other._outputs, sizeof(snn_type) * _perceptronCount);
+}
+
 snnLayer::~snnLayer()
 {
     delete[] _inputs;
@@ -175,3 +215,4 @@ void snnLayer::propagateErrors(const snn_type *errors, snn_type *propagatedError
             propagatedErrors[j] += thisPerceptronWeights[j] * errors[i];
     }
 }
+

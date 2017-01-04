@@ -2,6 +2,8 @@
 #define SNNDATA
 
 #include <vector>
+#include <cereal/access.hpp>
+#include <cereal/types/memory.hpp>
 
 typedef float snn_type;
 
@@ -32,6 +34,8 @@ private:
 
 public:
     snnMatrix(int rows, int cols);
+    snnMatrix(int rows, int cols, snn_type* data);
+    snnMatrix(const snnMatrix& other);
     ~snnMatrix();
 
     int getRows() const {return _rows;}
@@ -46,6 +50,29 @@ public:
 
     const snn_type& at(int r, int c) const;
     snn_type& at(int r, int c);
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(_rows, _cols);
+    //        archive(cereal::binary_data(_data, sizeof(snn_type) * _rows * _cols));
+        for (int i = 0; i < _rows * _cols; ++i)
+            archive(_data[i]);
+    }
+
+    template<class Archive>
+    static void load_and_construct(Archive& archive, cereal::construct<snnMatrix>& construct)
+    {
+        int rows, cols;
+        snn_type* data;
+
+        archive(rows, cols);
+        data = new snn_type[rows * cols];
+        for (int i = 0; i < rows * cols; ++i)
+            archive(data[i]);
+
+        construct(rows, cols, data);
+    }
 };
 
 #endif // SNNDATA
