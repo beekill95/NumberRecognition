@@ -3,6 +3,10 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
+#include <fstream>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <memory>
 
 NeuralNetwork::NeuralNetwork(int numInputs, const std::vector<int> &hiddenLayers)
 {
@@ -28,6 +32,10 @@ NeuralNetwork::NeuralNetwork(int numInputs, const std::vector<int> &hiddenLayers
     neuralNetwork->setMaxEpochs(100);
     neuralNetwork->setTrainingType(BatchTraining);
 }
+
+NeuralNetwork::NeuralNetwork(snn *neuralNetwork)
+    : neuralNetwork(neuralNetwork)
+{ }
 
 NeuralNetwork::~NeuralNetwork()
 {
@@ -92,4 +100,27 @@ std::vector<val_type> NeuralNetwork::predict(const std::vector<val_type> &input,
     }
 
     return {label};
+}
+
+#define NEURAL_NETWORK_FILE "neural_network.xml"
+
+void NeuralNetwork::serialize()
+{
+    std::ofstream fout(NEURAL_NETWORK_FILE);
+    cereal::XMLOutputArchive archive(fout);
+
+    std::unique_ptr<snn> nn{neuralNetwork};
+    archive(nn);
+    nn.release();
+}
+
+NeuralNetwork* NeuralNetwork::deserialize()
+{
+    std::ifstream fin(NEURAL_NETWORK_FILE);
+    cereal::XMLInputArchive archive(fin);
+
+    std::unique_ptr<snn> nn{nullptr};
+    archive(nn);
+
+    return new NeuralNetwork(nn.release());
 }

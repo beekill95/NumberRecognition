@@ -12,6 +12,8 @@ private:
     };
     snn* neuralNetwork;
 
+    NeuralNetwork(snn* neuralNetwork);
+
 public:
     // numInputs: the number of element in input vector
     // hiddenLayers: the number of perceptron in each hidden layer
@@ -49,6 +51,10 @@ public:
     // the return is always a 1-element array
     // contains the label (0 .. 9) of the image
     std::vector<val_type> predict(const std::vector<val_type> &input, bool verbose = false) const override;
+
+    // serialize
+    void serialize();
+    static NeuralNetwork* deserialize();
 };
 
 #endif // NEURALNETWORK_H
