@@ -136,6 +136,20 @@ std::vector<val_type> generateFirstDifference(const std::vector<int>& chainCode)
     return firstDifference;
 }
 
+// find the longest boundary in the boundaries
+std::vector<cv::Point> getLongestBoundary(const std::vector<std::vector<cv::Point> >& boundaries)
+{
+    int max = boundaries[0].size();
+    int index = 0;
+    for (int i = 1; i < boundaries.size(); ++i)
+        if (max < boundaries[i].size()) {
+            max = boundaries[i].size();
+            index = i;
+        }
+
+    return boundaries[index];
+}
+
 BoundaryFeature::BoundaryFeature(const cv::Point &cellSize, int maxBoundaryLength)
     : cellSize(cellSize), maxBoundaryLength(maxBoundaryLength)
 { }
@@ -144,6 +158,7 @@ std::vector<val_type> BoundaryFeature::extractFeature(const cv::Mat &image) cons
 {
     std::vector<std::vector<cv::Point> > boundaries;
 
+//    cv::imshow("Binary image", image);
     cv::findContours(image, boundaries, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     // draw the boundary
@@ -160,11 +175,45 @@ std::vector<val_type> BoundaryFeature::extractFeature(const cv::Mat &image) cons
     // check for boundaries found
     // if it's greater than 1
     // warning
-    if (boundaries.size() != 1)
+    if (boundaries.size() != 1) {
         std::cerr << "\nMore than 1 boundary found in image" << std::endl;
 
+        // draw the boundary
+//            cv::Mat drawing = cv::Mat::zeros(image.size(), CV_8UC3);
+//            for (size_t i = 0; i < boundaries.size(); ++i) {
+//                cv::Scalar color = cv::Scalar(255, 255, 0);
+//                cv::drawContours( drawing, boundaries, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+//            }
+
+//            cv::namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+//            cv::imshow( "Contours", drawing );
+
+        // show the image
+
+
+//            cv::waitKey();
+    }
+
     // subsampling
-    std::vector<cv::Point> largeBoundary = subsample(boundaries[0], cellSize);
+    std::vector<cv::Point> largeBoundary = subsample(getLongestBoundary(boundaries), cellSize);
+
+//    if (boundaries.size() != 1) {
+////        std::cerr << "\nMore than 1 boundary found in image" << std::endl;
+
+//        // draw the boundary
+//        std::vector<std::vector<cv::Point> > largeBoundaries;
+//            largeBoundaries.push_back(getLongestBoundary(boundaries));
+//            cv::Mat largeDrawing = cv::Mat::zeros(image.size(), CV_8UC3);
+//            {
+//                cv::Scalar color = cv::Scalar(0, 255, 255);
+//                cv::drawContours( largeDrawing, largeBoundaries, 0, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+//            }
+
+//            cv::namedWindow( "Subsample", CV_WINDOW_AUTOSIZE );
+//            cv::imshow( "Subsample", largeDrawing );
+
+//            cv::waitKey();
+//    }
 //    std::vector<std::vector<cv::Point> > largeBoundaries;
 //    largeBoundaries.push_back(largeBoundary);
 //    cv::Mat largeDrawing = cv::Mat::zeros(image.size(), CV_8UC3);

@@ -6,6 +6,10 @@
 #include <cereal/types/memory.hpp>
 #include <memory>
 
+class snn;
+
+typedef void (*snn_callback)(snn* nn, int epoch, snn_type currentError);
+
 class snn
 {
 private:
@@ -32,6 +36,9 @@ private:
 
     // determine the desired output error
     snn_type _desiredMeanError;
+
+    // callback
+    snn_callback _callback;
 
     // an array stores the layers (both hidden and output layers) of the network
     snnLayer** _layers;
@@ -114,6 +121,9 @@ public:
     // get set desired error
     snn_type getDesiredError() const {return _desiredMeanError;}
     void setDesiredError(snn_type desiredError) {_desiredMeanError = desiredError;}
+
+    // set callback
+    void setCallback(snn_callback callback) {_callback = callback;}
 
     // get set batch size
     void setBatchSize(int batchSize) {_batchSize = batchSize;}

@@ -163,5 +163,5 @@ std::vector<val_type> KNearestNeighbors::predict(const std::vector<val_type> &in
         }
     }
 
-    return getMajorityLabel(maxHeap);
+        return getMajorityLabel(maxHeap);
 }

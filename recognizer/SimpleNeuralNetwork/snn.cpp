@@ -18,7 +18,8 @@ snn::snn(int numInputs, int numOutputs, int numHiddenLayers, const int* nodesPer
       _trainingType(BatchTraining),
       _maxEpochs(300),
       _batchSize(10),
-      _desiredMeanError(0.001)
+      _desiredMeanError(0.001),
+      _callback(0)
 {
     // generate layers
     _layers = new snnLayer*[_numLayers];
@@ -61,6 +62,7 @@ snn::snn(
       _maxEpochs(maxEpochs),
       _batchSize(batchSize),
       _desiredMeanError(desiredMeanError),
+      _callback(0),
       _layers(layers)
 { }
 
@@ -71,7 +73,8 @@ snn::snn(const snn &other)
       _trainingType(other._trainingType),
       _maxEpochs(other._maxEpochs),
       _batchSize(other._batchSize),
-      _desiredMeanError(other._desiredMeanError)
+      _desiredMeanError(other._desiredMeanError),
+      _callback(other._callback)
 {
     _layers = new snnLayer*[_numLayers];
 
@@ -84,6 +87,7 @@ snn::~snn()
     for (int i = 0; i < _numLayers; ++i)
         delete _layers[i];
     delete[] _layers;
+    _callback = 0;
 }
 
 void snn::_generateRandomWeights()
@@ -163,6 +167,10 @@ void snn::train(const snnMatrix *inputs, const snnMatrix *outputs)
 
         if (sumError / outputs->getRows() < _desiredMeanError)
             break;
+
+        if (_callback != 0) {
+            _callback(this, epoch, sumError / outputs->getRows());
+        }
     }
 
     // cleaning up

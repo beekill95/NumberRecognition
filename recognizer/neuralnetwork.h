@@ -44,6 +44,9 @@ public:
 //    int getBatchSize() const {return neuralNetwork-}
     void setBatchSize(int batchSize) {neuralNetwork->setBatchSize(batchSize);}
 
+    // set callback
+    void setCallback(snn_callback callback) {neuralNetwork->setCallback(callback);}
+
     // train the network
     void train(const std::vector<std::vector<val_type> > &inputs, const std::vector<std::vector<val_type> > &outputs) override;
 
