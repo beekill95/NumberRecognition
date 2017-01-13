@@ -2,7 +2,7 @@
 #define NEURALNETWORK_H
 
 #include "recognizer.h"
-#include "SimpleNeuralNetwork/snn.h"
+#include "snn.h"
 
 class NeuralNetwork : public Recognizer
 {
